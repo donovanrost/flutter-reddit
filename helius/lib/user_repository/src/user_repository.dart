@@ -9,12 +9,9 @@ class UserRepository {
   String _identifier = 'Hp4M9q3bOeds3w';
   String _deviceID = 'pooppooppooppooppooppoop';
   var _client = http.Client();
-  Reddit _reddit;
+  Reddit reddit;
+  
 
-  UserRepository(){
-     _reddit = Reddit(_client);
-
-  }
 
 
 
@@ -22,12 +19,12 @@ class UserRepository {
     @required String username,
     @required String password,
   }) async {
-    _reddit = Reddit(_client);
+    reddit = Reddit(_client);
 
-    _reddit.authSetup(_identifier, _secret);
+    reddit.authSetup(_identifier, _secret);
     // await _reddit.authFinish();
     
-    await _reddit.authFinish(
+    await reddit.authFinish(
       username: username, 
       password: password, 
       clientType: 'installed_client', 

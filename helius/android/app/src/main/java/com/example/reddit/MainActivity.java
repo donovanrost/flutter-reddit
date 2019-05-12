@@ -1,4 +1,4 @@
-package com.example.reddit;
+package com.example.helius;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

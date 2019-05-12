@@ -6,8 +6,7 @@ import '../user_repository/user_repository.dart';
 
 import 'authentication.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
 
   AuthenticationBloc({@required this.userRepository})
