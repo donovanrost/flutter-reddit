@@ -81,8 +81,6 @@ class RedditProvider {
           clientId: _identifier,
           deviceId: _deviceID,
       );
-
-      reddit.front.hot().forEach((action) {print(action.toString());});
       instance.add(reddit);
     } else {
       final reddit = await Reddit.restoreAuthenticatedInstance(
