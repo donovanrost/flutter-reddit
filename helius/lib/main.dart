@@ -3,6 +3,7 @@ import 'package:helius/app_bloc.dart';
 import 'package:helius/app_provider.dart';
 
 import 'splash/splash.dart';
+import 'accounts/accounts.dart';
 import 'home/home.dart';
 import 'inbox/inbox.dart';
 import 'common/common.dart';
@@ -64,23 +65,23 @@ class BottomTabBarState extends State<BottomTabBar> {
           tabBar: CupertinoTabBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.home),
+                icon: Icon(CupertinoIcons.news_solid),
                 title: Text('Post'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.search),
+                icon: Icon(CupertinoIcons.mail_solid),
                 title: Text('Inbox'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.shopping_cart),
-                title: Text('Useranem'),
+                icon: Icon(CupertinoIcons.profile_circled),
+                title: Text('Accounts'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.shopping_cart),
+                icon: Icon(CupertinoIcons.search),
                 title: Text('Search'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.shopping_cart),
+                icon: Icon(CupertinoIcons.settings_solid),
                 title: Text('Settings'),
               ),
             ],
@@ -102,7 +103,7 @@ class BottomTabBarState extends State<BottomTabBar> {
               case 2:
                 return CupertinoTabView(builder: (context) {
                   return CupertinoPageScaffold(
-                    child: InboxPage(),
+                    child: AccountsPage(),
                   );
                 });
               case 3:
