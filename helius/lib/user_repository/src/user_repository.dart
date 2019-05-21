@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'package:reddit/reddit.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 class UserRepository {
 
-  String _secret = '';
-  String _identifier = 'Hp4M9q3bOeds3w';
-  String _deviceID = 'pooppooppooppooppooppoop';
-  var _client = http.Client();
-  Reddit reddit;
+
   
 
 
@@ -19,17 +14,8 @@ class UserRepository {
     @required String username,
     @required String password,
   }) async {
-    reddit = Reddit(_client);
-
-    reddit.authSetup(_identifier, _secret);
-    // await _reddit.authFinish();
+      
     
-    await reddit.authFinish(
-      username: username, 
-      password: password, 
-      clientType: 'installed_client', 
-      deviceID: _deviceID,
-      );
 
     return 'token';
   }
