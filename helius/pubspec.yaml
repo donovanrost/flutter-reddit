@@ -19,14 +19,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.0+2
-  reddit: 
-    git:
-      url: https://github.com/donovanrost/dart-reddit
-
+  # http: ^0.12.0+2
+  http: ^0.11.3+14
   bloc: ^0.13.0
   flutter_bloc: ^0.13.0
   equatable: ^0.1.5
+  sticky_header_list: ^1.0.6
+  flutter_sticky_header: "^0.3.4"
+  draw:
+    git:
+      url: https://github.com/draw-dev/DRAW
+  flutter_webview_plugin: ^0.3.5
+  shared_preferences: ^0.5.2
+  rxdart: ^0.22.0
+
+
+
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
