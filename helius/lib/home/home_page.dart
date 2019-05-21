@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:helius/app_bloc.dart';
+import 'package:helius/app_provider.dart';
 import 'package:helius/home/subreddit_tile_model.dart';
 import 'product_row_item.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+
 
 class HomePage extends StatelessWidget {
   List subredditTiles = [
@@ -39,8 +42,27 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return _homePageTab(context);
   }
+
+  // Widget _subcriptions(BuildContext context) {
+  //   Bloc bloc = AppProvider.of(context);
+  //   return StreamBuilder(
+  //     stream: bloc.mySubscriptions,
+  //     builder: (context, snapshot) {
+
+  //       return SliverList(
+  //           delegate: SliverChildBuilderDelegate((context, index) {
+  //             return ListTile(title: Text(snapshot.data[index]));
+  //           },
+  //           childCount: snapshot.hasData ? snapshot.data.length : 0,
+  //         ),
+  //       );
+  //     },
+    
+  //   );
+  // }
 
   Widget _textInput() {
     return CupertinoTextField(
@@ -79,7 +101,6 @@ class HomePage extends StatelessWidget {
 
   Widget _topListView(BuildContext context) {
     return SliverSafeArea(
-      // BEGINNING OF NEW CONTENT
       top: false,
       minimum: const EdgeInsets.only(top: 0, bottom: 0),
       sliver: SliverList(
@@ -139,8 +160,10 @@ class HomePage extends StatelessWidget {
 
   Widget _homePageTab(BuildContext context) {
     List<Widget> _slivers = [];
+
     _slivers.add(_homePageNavigationBar(context));
-    _slivers.add(_topListView(context));
+        _slivers.add(MediaQuery.removePadding(context:context, child: _topListView(context), removeBottom: true,
+    ));
     _slivers.addAll(_headerBuilder(context, 1, 15));
 
     return CustomScrollView(slivers: _slivers);

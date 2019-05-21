@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:draw/draw.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -12,8 +13,11 @@ class RedditProvider {
   Reddit _reddit;
   String _state = 'thisisarandomstring';
   Reddit get reddit => _reddit;
+  BehaviorSubject<Reddit> instance = BehaviorSubject<Reddit>();
+  Stream get mySubscriptions => _reddit.user.subreddits();
 
-  
+
+
 
   List<String> _scopes = [
     'identity',
@@ -39,14 +43,14 @@ class RedditProvider {
   RedditProvider();
 
   Future<Null> _freshInit() async {
-    Stream<String> onCode = await _server();
+  Stream<String> onCode = await _server();
+
 
     _reddit = Reddit.createWebFlowInstance(
       userAgent: userAgent,
       clientId: _identifier,
       clientSecret: _secret,
       redirectUri: Uri.parse('http://localhost:8080'),
-      
     );
 
     final authUrl =
@@ -58,11 +62,11 @@ class RedditProvider {
 
     final String code = await onCode.first;
     await _reddit.auth.authorize(code);
-    
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString('reddit_auth_token', _reddit.auth.credentials.toJson());
-
+    await prefs.setString(
+        'reddit_auth_token', _reddit.auth.credentials.toJson());
 
     print("CODE IS $code");
     print(await _reddit.user.me());
@@ -73,49 +77,60 @@ class RedditProvider {
   }
 
 
-  Future<Null> init() async {
+  init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('reddit_auth_token');
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String token =  prefs.getString('reddit_auth_token');
-      print(token);
-      if (token == null) {
-        return _freshInit();
-      } else {
-        _reddit = await Reddit.restoreAuthenticatedInstance(
-          token,
-          userAgent: userAgent,
-          redirectUri: Uri.parse('http://localhost:8080'),
-          clientId: _identifier,
-          clientSecret: _secret,
+    if (token == null) {
+      final reddit = await Reddit.createReadOnlyInstance(
+        userAgent: userAgent,
+        clientId: _identifier,
+        clientSecret: _secret,
+      );
+      instance.add(reddit);
+    } else {
+      final reddit = await Reddit.restoreAuthenticatedInstance(
+        token,
+        userAgent: userAgent,
+        redirectUri: Uri.parse('http://localhost:8080'),
+        clientId: _identifier,
+        clientSecret: _secret,
+      );
+      instance.add(reddit);
+    }
 
-        );
-        var answer = _reddit.user.contributorSubreddits();
-        print(answer.toString());
-        return Future<Null>.value(null);
-        
+
   }
 
 
+  // Future<Null> init() async {
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String token = prefs.getString('reddit_auth_token');
+    // print(token);
+    // if (token == null) {
+    //   return _freshInit();
+    // } else {
+    //   _reddit = await Reddit.restoreAuthenticatedInstance(
+    //     token,
+    //     userAgent: userAgent,
+    //     redirectUri: Uri.parse('http://localhost:8080'),
+    //     clientId: _identifier,
+    //     clientSecret: _secret,
+    //   );
 
-      }
 
-
-
-  
+    //   return Future<Null>.value(null);
+    // }
+  // }
 
   Future<Stream<String>> _server() async {
-    print(1);
     final StreamController<String> onCode = new StreamController();
-    print(2);
 
     HttpServer server =
         await HttpServer.bind(InternetAddress.loopbackIPv4, 8080);
-    print('2a');
 
     server.listen((HttpRequest request) async {
-      print('3a');
       final String code = request.uri.queryParameters["code"];
-      print(3);
 
       print(code.toString());
 
@@ -123,22 +138,21 @@ class RedditProvider {
         ..statusCode = 200
         ..headers.set("Content-Type", ContentType.HTML.mimeType)
         ..write("<html><h1>You can now close this window</h1></html>");
-      print(4);
 
       await request.response.close();
-      print(5);
-
       await server.close(force: true);
-      print(6);
-
       onCode.add(code);
-      print(7);
-
       await onCode.close();
-      print(8);
     });
-    print(9);
 
     return onCode.stream;
   }
+
+  // Future<Null> fetchMySubscriptions() async {
+  //   Stream x = reddit.user.subreddits();
+  //   x.forEach((x) => print(x.displayName));
+
+    
+  //   return Future<Null>.value(null);
+  // }
 }

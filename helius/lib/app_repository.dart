@@ -2,12 +2,11 @@
 import './reddit_provider.dart';
 
 class AppRepository {
-  RedditProvider _reddit;
-
-  Function get init => _reddit.init;
+  
+  RedditProvider reddit;
 
   AppRepository(){
-    _reddit = RedditProvider();
+    reddit = RedditProvider();
   }
 
 
