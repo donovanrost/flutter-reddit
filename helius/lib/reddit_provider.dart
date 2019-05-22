@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:draw/draw.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,7 +15,9 @@ class RedditProvider {
   String _state = 'thisisarandomstring';
   Reddit get reddit => _reddit;
   BehaviorSubject<Reddit> instance = BehaviorSubject<Reddit>();
-  Stream get mySubscriptions => _reddit.user.subreddits();
+  BehaviorSubject mySubscriptions = BehaviorSubject();
+  BehaviorSubject moderationSubreddit = BehaviorSubject();
+
 
   List<String> _scopes = [
     'identity',
@@ -36,40 +40,59 @@ class RedditProvider {
   ];
   final userAgent = 'ios:com.example.helios:v0.0.0 (by /u/pinkywrinkle)';
 
-  RedditProvider();
+  RedditProvider() {
+    instance.listen((_reddit) {
 
-  // Future<Null> _freshInit() async {
-  //   Stream<String> onCode = await _server();
+     if(!_reddit.readOnly) { 
+      var subs = _reddit.user.subreddits().toList();
+      subs.then((sub) {
+        sub.sort((a,b) => a.displayName.compareTo(b.displayName));
+        mySubscriptions.add(sub);
+      });
+     
+     } else if (_reddit.readOnly) {
+       mySubscriptions.add([]);
+     } else {
+       mySubscriptions.drain();
+     }
+     
 
-  //   _reddit = Reddit.createWebFlowInstance(
-  //     userAgent: userAgent,
-  //     clientId: _identifier,
-  //     clientSecret: _secret,
-  //     redirectUri: Uri.parse('http://localhost:8080'),
-  //   );
 
-  //   final authUrl =
-  //       _reddit.auth.url(_scopes, _state, compactLogin: true).toString();
-  //   print(authUrl);
+    });
+  }
+  
+   loginWithNewAccount() async {
 
-  //   final FlutterWebviewPlugin webviewPlugin = new FlutterWebviewPlugin();
-  //   webviewPlugin.launch(authUrl, clearCache: true, clearCookies: true);
+     /* //TODO
+     Currently this allows the user to log in with one account. 
+     Apollo is somehow able to maintain credentials for multiple accounts
+     */
 
-  //   final String code = await onCode.first;
-  //   await _reddit.auth.authorize(code);
 
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    Stream<String> onCode = await _server();
 
-  //   await prefs.setString(
-  //       'reddit_auth_token', _reddit.auth.credentials.toJson());
+    _reddit = Reddit.createWebFlowInstance(
+      userAgent: userAgent,
+      clientId: _identifier,
+      clientSecret: _secret,
+      redirectUri: Uri.parse('http://localhost:8080'),
+    );
 
-  //   print("CODE IS $code");
-  //   print(await _reddit.user.me());
+    final authUrl =
+        _reddit.auth.url(_scopes, _state, compactLogin: true).toString();
+    print(authUrl);
+    _launchURL(authUrl);
 
-  //   webviewPlugin.close();
+    final String code = await onCode.first;
+    await _reddit.auth.authorize(code);
 
-  //   return Future<Null>.value(null);
-  // }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(
+        'reddit_auth_token', _reddit.auth.credentials.toJson());
+    instance.add(_reddit);
+
+  }
 
   init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -81,6 +104,8 @@ class RedditProvider {
           clientId: _identifier,
           deviceId: _deviceID,
       );
+            print(reddit.readOnly.toString());
+
       instance.add(reddit);
     } else {
       final reddit = await Reddit.restoreAuthenticatedInstance(
@@ -93,25 +118,6 @@ class RedditProvider {
       instance.add(reddit);
     }
   }
-
-  // Future<Null> init() async {
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // String token = prefs.getString('reddit_auth_token');
-  // print(token);
-  // if (token == null) {
-  //   return _freshInit();
-  // } else {
-  //   _reddit = await Reddit.restoreAuthenticatedInstance(
-  //     token,
-  //     userAgent: userAgent,
-  //     redirectUri: Uri.parse('http://localhost:8080'),
-  //     clientId: _identifier,
-  //     clientSecret: _secret,
-  //   );
-
-  //   return Future<Null>.value(null);
-  // }
-  // }
 
   Future<Stream<String>> _server() async {
     final StreamController<String> onCode = new StreamController();
@@ -138,10 +144,12 @@ class RedditProvider {
     return onCode.stream;
   }
 
-  // Future<Null> fetchMySubscriptions() async {
-  //   Stream x = reddit.user.subreddits();
-  //   x.forEach((x) => print(x.displayName));
-
-  //   return Future<Null>.value(null);
-  // }
+  _launchURL(url) async {
+    // const url = 'https://flutter.io';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }
