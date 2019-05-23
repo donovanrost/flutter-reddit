@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:helius/app_bloc.dart';
 import 'package:helius/app_provider.dart';
 import 'package:helius/home/subreddit_tile_model.dart';
 import 'product_row_item.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'subreddit_list_item.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
         subtitle: 'Most popular posts across Reddit',
         title: 'Popular Posts'),
     SubredditTile(
-        icon: CupertinoIcons.add,
+        icon: CupertinoIcons.collections_solid,
         iconColor: CupertinoColors.activeGreen,
         subreddit: 'home',
         subtitle: 'Posts across all subreddits',
@@ -35,34 +35,64 @@ class HomePage extends StatelessWidget {
         title: 'Moderator Posts')
   ];
 
-  HomePage(context) {}
-
-  //     var answer = await  _reddit.reddit.user.contributorSubreddits();
-  // print(answer.toString());
+  HomePage(context);
 
   @override
   Widget build(BuildContext context) {
+    final bloc = AppProvider.of(context);
 
-    return _homePageTab(context);
+    return _homePageTab(context, bloc);
   }
 
-  // Widget _subcriptions(BuildContext context) {
-  //   Bloc bloc = AppProvider.of(context);
-  //   return StreamBuilder(
-  //     stream: bloc.mySubscriptions,
-  //     builder: (context, snapshot) {
+  Widget _moderationList(BuildContext context, bloc) {
+    return StreamBuilder(
+        stream: bloc.myModerations,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return SliverList(
+              delegate: SliverChildListDelegate([]),
+            );
+          } else if (snapshot.hasError) {
+            return SliverList(
+              delegate: SliverChildListDelegate([]),
+            );
+          } else {
+            return new SliverStickyHeaderBuilder(
+              builder: (context, state) =>
+                  _header(context, state, 'moderator'),
+              sliver: new SliverList(
+                delegate: new SliverChildBuilderDelegate(
+                  (context, i) => SubredditListItem(
+                    index: i,
+                    lastItem: i == snapshot.data.length -1,
+                    title: snapshot.data[i].displayName
+                   ),
+                  childCount: snapshot.data.length,
+                ),
+              ),
+            );
+          }
+        });
+  }
 
-  //       return SliverList(
-  //           delegate: SliverChildBuilderDelegate((context, index) {
-  //             return ListTile(title: Text(snapshot.data[index]));
-  //           },
-  //           childCount: snapshot.hasData ? snapshot.data.length : 0,
-  //         ),
-  //       );
-  //     },
-    
-  //   );
-  // }
+
+
+  Widget _header(
+      BuildContext context, SliverStickyHeaderState state, String title) {
+    return Container(
+      height: 20.0,
+      color: (state.isPinned)
+          ? CupertinoColors.activeBlue
+          : CupertinoColors.darkBackgroundGray,
+      padding: EdgeInsets.symmetric(horizontal: 24.0),
+      alignment: Alignment.centerLeft,
+      child: new Text(
+        '${title.toUpperCase()}',
+        style: const TextStyle(color: CupertinoColors.lightBackgroundGray),
+      ),
+    );
+  }
+
 
   Widget _textInput() {
     return CupertinoTextField(
@@ -126,46 +156,109 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _header(context, state, index) {
-    return Container(
-      height: 20.0,
-      color: (state.isPinned
-              ? CupertinoColors.activeBlue
-              : CupertinoColors.darkBackgroundGray)
-          .withOpacity(1.0 - state.scrollPercentage),
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      alignment: Alignment.centerLeft,
-      child: new Text(
-        'Header #$index',
-        style: const TextStyle(color: CupertinoColors.lightBackgroundGray),
-      ),
-    );
-  }
+  _subscriptionList(context, bloc) {
+    const alphabet = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z"
+    ];
+    List<Widget> answer = [];
 
-  List<Widget> _headerBuilder(BuildContext context, int firstIndex, int count) {
-    return List.generate(count, (sliverIndex) {
-      return new SliverStickyHeaderBuilder(
-        builder: (context, state) => _header(context, state, sliverIndex),
-        sliver: new SliverList(
-          delegate: new SliverChildBuilderDelegate(
-            (context, i) => Container(child: Text('$i')),
-            childCount: 8,
-          ),
-        ),
-      );
+    alphabet.forEach((letter) {
+      var sliver = StreamBuilder(
+          stream: bloc.mySubscriptions,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return SliverList(
+                delegate: SliverChildListDelegate([]),
+              );
+            } else if (snapshot.hasError) {
+              return SliverList(
+                delegate: SliverChildListDelegate([]),
+              );
+            } else {
+              int first = snapshot.data.indexWhere((sub)=> sub.displayName[0].toLowerCase()== letter.toLowerCase());
+              int last = snapshot.data.lastIndexWhere((sub)=> sub.displayName[0].toLowerCase()== letter.toLowerCase());
+              // print('${first.toString()} --- ${last.toString()}');
+
+              if(first == -1 || last == -1) {
+                return SliverList(
+                delegate: SliverChildListDelegate([]),
+              );
+              } else {
+                var sublist = snapshot.data.sublist(first, last);
+
+              // print('$letter --- ${first.toString()} --- ${last.toString()} --- ${sublist.length} --- ${snapshot.data.length}');
+              // if(letter == 'y') {
+              //   sublist.forEach((a) => print(a.displayName));
+              // }
+              
+
+              return SliverStickyHeaderBuilder(
+                builder: (context, state) => _header(context, state, letter),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) => Dismissible(
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        color: CupertinoColors.destructiveRed, 
+                        child: Text('Unsubscribe', style: TextStyle(color: CupertinoColors.white),)) ,
+                      key: Key(sublist[i].displayName),
+                      child: SubredditListItem(
+                        index: i,
+                        lastItem: i == sublist.length -1,
+                        title: sublist[i].displayName
+                      )
+                    ), 
+                    childCount: sublist.length
+                   ),
+              ));
+              }
+            }
+          });
+          answer.add(sliver);
     });
+
+    return answer;
   }
 
   /* ======= PAGES ======= */
 
-  Widget _homePageTab(BuildContext context) {
+  Widget _homePageTab(BuildContext context, bloc) {
     List<Widget> _slivers = [];
 
     _slivers.add(_homePageNavigationBar(context));
-        _slivers.add(MediaQuery.removePadding(context:context, child: _topListView(context), removeBottom: true,
+    _slivers.add(MediaQuery.removePadding(
+      context: context,
+      child: _topListView(context),
+      removeBottom: true,
     ));
-    _slivers.addAll(_headerBuilder(context, 1, 15));
-
+    _slivers.add(_moderationList(context, bloc));
+    _slivers.addAll(_subscriptionList(context, bloc));
     return CustomScrollView(slivers: _slivers);
   }
 }

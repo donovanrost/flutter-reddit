@@ -13,11 +13,10 @@ class RedditProvider {
   String _deviceID = 'pooppooppooppooppooppoop';
   Reddit _reddit;
   String _state = 'thisisarandomstring';
-  Reddit get reddit => _reddit;
+  // Reddit get reddit => _reddit;
   BehaviorSubject<Reddit> instance = BehaviorSubject<Reddit>();
   BehaviorSubject mySubscriptions = BehaviorSubject();
-  BehaviorSubject moderationSubreddit = BehaviorSubject();
-
+  BehaviorSubject moderatorSubreddits = BehaviorSubject();
 
   List<String> _scopes = [
     'identity',
@@ -41,33 +40,49 @@ class RedditProvider {
   final userAgent = 'ios:com.example.helios:v0.0.0 (by /u/pinkywrinkle)';
 
   RedditProvider() {
-    instance.listen((_reddit) {
-
-     if(!_reddit.readOnly) { 
-      var subs = _reddit.user.subreddits().toList();
-      subs.then((sub) {
-        sub.sort((a,b) => a.displayName.compareTo(b.displayName));
-        mySubscriptions.add(sub);
-      });
-     
-     } else if (_reddit.readOnly) {
-       mySubscriptions.add([]);
-     } else {
-       mySubscriptions.drain();
-     }
-     
-
-
+    instance.listen((data) {
+      _subscriptionsListener(data);
+      _moderationsListener(data);
     });
   }
-  
-   loginWithNewAccount() async {
 
-     /* //TODO
+  _moderationsListener(Reddit _reddit) {
+    if(_reddit == null) {
+      moderatorSubreddits.drain();
+    } else  if (!_reddit.readOnly) {
+      var subs = _reddit.user.moderatorSubreddits().toList();
+      subs.then((data) {
+        data.sort((a, b) => a.displayName.compareTo(b.displayName));
+        moderatorSubreddits.add(data);
+      });
+    } else {
+      moderatorSubreddits.add([]);
+    }
+  }
+
+  _subscriptionsListener(Reddit _reddit) {
+    if(_reddit == null) {
+      mySubscriptions.drain();
+    } else  if (_reddit.readOnly == false) {
+      var subs = _reddit.user.subreddits(limit: 5000).toList();
+      subs.then((data) {
+        data.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+        
+        // data.forEach((f) => print(f.displayName));
+
+        mySubscriptions.add(data);
+      });
+    } else {
+      mySubscriptions.add([]);
+    }
+
+  }
+
+  loginWithNewAccount() async {
+    /* //TODO
      Currently this allows the user to log in with one account. 
      Apollo is somehow able to maintain credentials for multiple accounts
      */
-
 
     Stream<String> onCode = await _server();
 
@@ -91,7 +106,6 @@ class RedditProvider {
     await prefs.setString(
         'reddit_auth_token', _reddit.auth.credentials.toJson());
     instance.add(_reddit);
-
   }
 
   init() async {
@@ -100,11 +114,11 @@ class RedditProvider {
 
     if (token == null) {
       final reddit = await Reddit.createUntrustedReadOnlyInstance(
-          userAgent: userAgent,
-          clientId: _identifier,
-          deviceId: _deviceID,
+        userAgent: userAgent,
+        clientId: _identifier,
+        deviceId: _deviceID,
       );
-            print(reddit.readOnly.toString());
+      print(reddit.readOnly.toString());
 
       instance.add(reddit);
     } else {

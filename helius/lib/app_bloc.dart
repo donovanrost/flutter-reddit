@@ -3,7 +3,8 @@ class Bloc extends Object {
 
   final _repository;
 
-  Stream get mySubscriptions => _repository.reddit.mySubscriptions;
+  BehaviorSubject get mySubscriptions => _repository.reddit.mySubscriptions;
+  BehaviorSubject get myModerations => _repository.reddit.moderatorSubreddits;
   BehaviorSubject get reddit => _repository.reddit.instance;
   Function get loginWithNewAccount => _repository.reddit.loginWithNewAccount();
 

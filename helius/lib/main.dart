@@ -91,7 +91,7 @@ class BottomTabBarState extends State<BottomTabBar> {
               case 0:
                 return CupertinoTabView(builder: (context) {
                   return CupertinoPageScaffold(
-                    child: HomePage(context),
+                    child:SafeArea(child: HomePage(context)),
                   );
                 });
               case 1:
