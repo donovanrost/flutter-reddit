@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
+import 'package:helius/home/list_item_base.dart';
 import 'package:helius/home/subreddit_tile_model.dart';
+import 'package:helius/styles.dart';
 import 'product_row_item.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'subreddit_list_item.dart';
@@ -62,11 +64,11 @@ class HomePage extends StatelessWidget {
                   _header(context, state, 'moderator'),
               sliver: new SliverList(
                 delegate: new SliverChildBuilderDelegate(
-                  (context, i) => SubredditListItem(
-                    index: i,
+                  (context, i) => ListItemBase(
                     lastItem: i == snapshot.data.length -1,
-                    title: snapshot.data[i].displayName
-                   ),
+                    middle: <Widget>[Text(snapshot.data[i].displayName)],
+                  ),
+   
                   childCount: snapshot.data.length,
                 ),
               ),
@@ -129,6 +131,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget _topListIcon(BuildContext context,IconData icon, Color iconColor) {
+         return Container(
+              height: 48,
+              width: 48,
+              child: Icon(icon,
+                  size: 36, color: CupertinoColors.white),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: iconColor));
+  }
+
   Widget _topListView(BuildContext context) {
     return SliverSafeArea(
       top: false,
@@ -142,11 +155,33 @@ class HomePage extends StatelessWidget {
                 onTap: () {
                   print('$index');
                 },
-                child: SubredditTileItem(
-                  index: index,
-                  subredditTile: subredditTiles[index],
-                  lastItem: index == subredditTiles.length - 1,
-                ),
+                child: ListItemBase(
+                  lastItem: index == subredditTiles.length - 1, 
+                  leading:  ListItemLeading(
+                    height: 48,
+                    width: 48,
+                    child: _topListIcon(context, 
+                      subredditTiles[index].icon, 
+                      subredditTiles[index].iconColor
+                    ),
+                  ),
+                middle: [
+                                    Text(
+                    subredditTiles[index].title,
+                    style: Styles.productRowItemName,
+                  ),
+                                    const Padding(padding: EdgeInsets.only(top: 8)),
+                                                      Text(
+                    subredditTiles[index].subtitle,
+                    style: Styles.productRowItemPrice,
+                  )
+
+                ]
+                )
+                // child: SubredditTileItem(
+                //   subredditTile: subredditTiles[index],
+                //   lastItem: index == subredditTiles.length - 1,
+                // ),
               ));
             }
             return null;
@@ -222,17 +257,26 @@ class HomePage extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, i) => Dismissible(
+                      onDismissed: (_) {
+                        //TODO NEED TO SUBSUBSCRIBE FROM THE SUBREDDIT
+                        //TODO AND REMOVE THE SUBREDDIT FROM THE UNDERYING LIST
+                        //TODO IF THE ITEM IS IN THE LIST THE APP BREAKS 
+                      } ,
                       direction: DismissDirection.endToStart,
                       background: Container(
                         alignment: Alignment.centerRight,
                         color: CupertinoColors.destructiveRed, 
                         child: Text('Unsubscribe', style: TextStyle(color: CupertinoColors.white),)) ,
                       key: Key(sublist[i].displayName),
-                      child: SubredditListItem(
-                        index: i,
+                      child: ListItemBase(
                         lastItem: i == sublist.length -1,
-                        title: sublist[i].displayName
+                        middle: [Text(sublist[i].displayName)]
                       )
+                      // child: SubredditListItem(
+                      //   index: i,
+                      //   lastItem: i == sublist.length -1,
+                      //   title: sublist[i].displayName
+                      // )
                     ), 
                     childCount: sublist.length
                    ),

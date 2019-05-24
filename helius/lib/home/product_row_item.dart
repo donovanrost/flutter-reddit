@@ -5,14 +5,13 @@ import '../styles.dart';
 
 class SubredditTileItem extends StatelessWidget {
   const SubredditTileItem({
-    this.index,
     this.subredditTile,
     this.lastItem,
   });
 
   final SubredditTile subredditTile;
-  final int index;
   final bool lastItem;
+  // static const  _safeAreaLeft = 16.0;
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +27,14 @@ class SubredditTileItem extends StatelessWidget {
       child:  Row(
 
         children: <Widget>[
-          Container(
-              height: 48,
-              width: 48,
-              child: Icon(subredditTile.icon,
-                  size: 36, color: CupertinoColors.white),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: subredditTile.iconColor)),
+          // Container(
+          //     height: 48,
+          //     width: 48,
+          //     child: Icon(subredditTile.icon,
+          //         size: 36, color: CupertinoColors.white),
+          //     decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(50),
+          //         color: subredditTile.iconColor)),
 
           Expanded(
             child: Padding(
@@ -62,7 +61,7 @@ class SubredditTileItem extends StatelessWidget {
           //   child: const Icon(
           //     CupertinoIcons.plus_circled,
           //     semanticLabel: 'Add',
-          //   ),
+          //   ), onPressed: () {},
           //   // onPressed: () {
           //   //   final model = Provider.of<AppStateModel>(context);
           //   //   model.addProductToCart(product.id);
@@ -81,7 +80,7 @@ class SubredditTileItem extends StatelessWidget {
         row,
         Padding(
           padding: const EdgeInsets.only(
-            left: 75,
+            left: 28,
             right: 16,
           ),
           child: Container(
