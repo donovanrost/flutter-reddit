@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:draw/draw.dart';
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class RedditProvider {
   String _secret = '';
@@ -17,6 +18,7 @@ class RedditProvider {
   BehaviorSubject<Reddit> instance = BehaviorSubject<Reddit>();
   BehaviorSubject mySubscriptions = BehaviorSubject();
   BehaviorSubject moderatorSubreddits = BehaviorSubject();
+  // BehaviorSubject subredditContent = BehaviorSubject();
 
   List<String> _scopes = [
     'identity',
@@ -43,13 +45,30 @@ class RedditProvider {
     instance.listen((data) {
       _subscriptionsListener(data);
       _moderationsListener(data);
+      
+      
     });
+
   }
 
+  Future<Stream> test(String subreddit) async {
+    var x = await instance.firstWhere((data) => data != null);
+
+    Stream y =  x.subreddit(subreddit).hot();
+    return Future.value(y);
+  }
+
+
+ 
+
+
+
+
+
   _moderationsListener(Reddit _reddit) {
-    if(_reddit == null) {
+    if (_reddit == null) {
       moderatorSubreddits.drain();
-    } else  if (!_reddit.readOnly) {
+    } else if (!_reddit.readOnly) {
       var subs = _reddit.user.moderatorSubreddits().toList();
       subs.then((data) {
         data.sort((a, b) => a.displayName.compareTo(b.displayName));
@@ -61,13 +80,14 @@ class RedditProvider {
   }
 
   _subscriptionsListener(Reddit _reddit) {
-    if(_reddit == null) {
+    if (_reddit == null) {
       mySubscriptions.drain();
-    } else  if (_reddit.readOnly == false) {
+    } else if (_reddit.readOnly == false) {
       var subs = _reddit.user.subreddits(limit: 5000).toList();
       subs.then((data) {
-        data.sort((a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
-        
+        data.sort((a, b) =>
+            a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+
         // data.forEach((f) => print(f.displayName));
 
         mySubscriptions.add(data);
@@ -75,7 +95,6 @@ class RedditProvider {
     } else {
       mySubscriptions.add([]);
     }
-
   }
 
   loginWithNewAccount() async {

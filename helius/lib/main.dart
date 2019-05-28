@@ -60,6 +60,15 @@ class BottomTabBarState extends State<BottomTabBar> {
     bloc = AppProvider.of(context);
 
     return CupertinoApp(
+        theme: CupertinoThemeData(
+          // primaryColor: CupertinoColors.activeBlue,
+          // barBackgroundColor: CupertinoColors.activeOrange,
+          // textTheme: null,
+          // primaryContrastingColor: null,
+          // brightness: Brightness.dark,
+          // scaffoldBackgroundColor: CupertinoColors.activeBlue,
+
+        ),
         title: 'Helius',
         home: CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
@@ -90,9 +99,12 @@ class BottomTabBarState extends State<BottomTabBar> {
             switch (index) {
               case 0:
                 return CupertinoTabView(builder: (context) {
-                  return CupertinoPageScaffold(
-                    child:SafeArea(child: HomePage(context)),
-                  );
+                  return HomePage(context);
+                  // return 
+                  // CupertinoPageScaffold(
+                  //   child:
+                  //   SafeArea(child: HomePage(context)),
+                  // );
                 });
               case 1:
                 return CupertinoTabView(builder: (context) {

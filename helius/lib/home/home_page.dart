@@ -2,12 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
 import 'package:helius/home/list_item_base.dart';
+import 'package:helius/home/routing_message.dart';
+import 'package:helius/home/subreddit_page.dart';
 import 'package:helius/home/subreddit_tile_model.dart';
 import 'package:helius/styles.dart';
-import 'product_row_item.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
-import 'subreddit_list_item.dart';
-
 
 class HomePage extends StatelessWidget {
   List subredditTiles = [
@@ -43,7 +42,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = AppProvider.of(context);
 
-    return _homePageTab(context, bloc);
+    return SafeArea(
+        top: false,
+        bottom: true,
+        child: CupertinoPageScaffold(child: _homePageTab(context, bloc)));
   }
 
   Widget _moderationList(BuildContext context, bloc) {
@@ -60,15 +62,13 @@ class HomePage extends StatelessWidget {
             );
           } else {
             return new SliverStickyHeaderBuilder(
-              builder: (context, state) =>
-                  _header(context, state, 'moderator'),
+              builder: (context, state) => _header(context, state, 'moderator'),
               sliver: new SliverList(
                 delegate: new SliverChildBuilderDelegate(
                   (context, i) => ListItemBase(
-                    lastItem: i == snapshot.data.length -1,
-                    middle: <Widget>[Text(snapshot.data[i].displayName)],
-                  ),
-   
+                        lastItem: i == snapshot.data.length - 1,
+                        middle: <Widget>[Text(snapshot.data[i].displayName)],
+                      ),
                   childCount: snapshot.data.length,
                 ),
               ),
@@ -76,8 +76,6 @@ class HomePage extends StatelessWidget {
           }
         });
   }
-
-
 
   Widget _header(
       BuildContext context, SliverStickyHeaderState state, String title) {
@@ -94,7 +92,6 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _textInput() {
     return CupertinoTextField(
@@ -131,15 +128,13 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _topListIcon(BuildContext context,IconData icon, Color iconColor) {
-         return Container(
-              height: 48,
-              width: 48,
-              child: Icon(icon,
-                  size: 36, color: CupertinoColors.white),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: iconColor));
+  Widget _topListIcon(BuildContext context, IconData icon, Color iconColor) {
+    return Container(
+        height: 48,
+        width: 48,
+        child: Icon(icon, size: 36, color: CupertinoColors.white),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50), color: iconColor));
   }
 
   Widget _topListView(BuildContext context) {
@@ -152,37 +147,33 @@ class HomePage extends StatelessWidget {
             if (index < subredditTiles.length) {
               return Material(
                   child: InkWell(
-                onTap: () {
-                  print('$index');
-                },
-                child: ListItemBase(
-                  lastItem: index == subredditTiles.length - 1, 
-                  leading:  ListItemLeading(
-                    height: 48,
-                    width: 48,
-                    child: _topListIcon(context, 
-                      subredditTiles[index].icon, 
-                      subredditTiles[index].iconColor
-                    ),
-                  ),
-                middle: [
-                                    Text(
-                    subredditTiles[index].title,
-                    style: Styles.productRowItemName,
-                  ),
-                                    const Padding(padding: EdgeInsets.only(top: 8)),
-                                                      Text(
-                    subredditTiles[index].subtitle,
-                    style: Styles.productRowItemPrice,
-                  )
-
-                ]
-                )
-                // child: SubredditTileItem(
-                //   subredditTile: subredditTiles[index],
-                //   lastItem: index == subredditTiles.length - 1,
-                // ),
-              ));
+                      onTap: () {
+                        Navigator.of(context).push(CupertinoPageRoute<void>(
+                            builder: (BuildContext context) => SubredditPage(
+                              message: RoutingMessage(previousPage: 'Subreddits', subredditName: 'All'),
+                                )));
+                      },
+                      child: ListItemBase(
+                          lastItem: index == subredditTiles.length - 1,
+                          leading: ListItemLeading(
+                            height: 48,
+                            width: 48,
+                            child: _topListIcon(
+                                context,
+                                subredditTiles[index].icon,
+                                subredditTiles[index].iconColor),
+                          ),
+                          middle: [
+                            Text(
+                              subredditTiles[index].title,
+                              style: Styles.productRowItemName,
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 8)),
+                            Text(
+                              subredditTiles[index].subtitle,
+                              style: Styles.productRowItemPrice,
+                            )
+                          ])));
             }
             return null;
           },
@@ -235,56 +226,58 @@ class HomePage extends StatelessWidget {
                 delegate: SliverChildListDelegate([]),
               );
             } else {
-              int first = snapshot.data.indexWhere((sub)=> sub.displayName[0].toLowerCase()== letter.toLowerCase());
-              int last = snapshot.data.lastIndexWhere((sub)=> sub.displayName[0].toLowerCase()== letter.toLowerCase());
+              int first = snapshot.data.indexWhere((sub) =>
+                  sub.displayName[0].toLowerCase() == letter.toLowerCase());
+              int last = snapshot.data.lastIndexWhere((sub) =>
+                  sub.displayName[0].toLowerCase() == letter.toLowerCase());
               // print('${first.toString()} --- ${last.toString()}');
 
-              if(first == -1 || last == -1) {
+              if (first == -1 || last == -1) {
                 return SliverList(
-                delegate: SliverChildListDelegate([]),
-              );
+                  delegate: SliverChildListDelegate([]),
+                );
               } else {
                 var sublist = snapshot.data.sublist(first, last);
 
-              // print('$letter --- ${first.toString()} --- ${last.toString()} --- ${sublist.length} --- ${snapshot.data.length}');
-              // if(letter == 'y') {
-              //   sublist.forEach((a) => print(a.displayName));
-              // }
-              
-
-              return SliverStickyHeaderBuilder(
-                builder: (context, state) => _header(context, state, letter),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, i) => Dismissible(
-                      onDismissed: (_) {
-                        //TODO NEED TO SUBSUBSCRIBE FROM THE SUBREDDIT
-                        //TODO AND REMOVE THE SUBREDDIT FROM THE UNDERYING LIST
-                        //TODO IF THE ITEM IS IN THE LIST THE APP BREAKS 
-                      } ,
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        color: CupertinoColors.destructiveRed, 
-                        child: Text('Unsubscribe', style: TextStyle(color: CupertinoColors.white),)) ,
-                      key: Key(sublist[i].displayName),
-                      child: ListItemBase(
-                        lastItem: i == sublist.length -1,
-                        middle: [Text(sublist[i].displayName)]
-                      )
-                      // child: SubredditListItem(
-                      //   index: i,
-                      //   lastItem: i == sublist.length -1,
-                      //   title: sublist[i].displayName
-                      // )
-                    ), 
-                    childCount: sublist.length
-                   ),
-              ));
+                return SliverStickyHeaderBuilder(
+                    builder: (context, state) =>
+                        _header(context, state, letter),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                          (context, i) => GestureDetector(
+                              onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          SubredditPage( message:
+                                            RoutingMessage(
+                                              subredditName: sublist[i].displayName, 
+                                              previousPage: 'Subreddits')
+                                          ))),
+                              child: Dismissible(
+                                  onDismissed: (_) {
+                                    //TODO NEED TO UNSUBSCRIBE FROM THE SUBREDDIT
+                                    //TODO AND REMOVE THE SUBREDDIT FROM THE UNDERYING LIST
+                                    //TODO IF THE ITEM IS IN THE LIST THE APP BREAKS
+                                  },
+                                  direction: DismissDirection.endToStart,
+                                  background: Container(
+                                      alignment: Alignment.centerRight,
+                                      color: CupertinoColors.destructiveRed,
+                                      child: Text(
+                                        'Unsubscribe',
+                                        style: TextStyle(
+                                            color: CupertinoColors.white),
+                                      )),
+                                  key: Key(sublist[i].displayName),
+                                  child: ListItemBase(
+                                      lastItem: i == sublist.length - 1,
+                                      middle: [Text(sublist[i].displayName)]))),
+                          childCount: sublist.length),
+                    ));
               }
             }
           });
-          answer.add(sliver);
+      answer.add(sliver);
     });
 
     return answer;
