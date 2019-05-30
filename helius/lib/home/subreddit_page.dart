@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:helius/app_provider.dart';
 import 'package:helius/home/routing_message.dart';
+import 'package:helius/home/submission_bloc.dart';
 import 'package:helius/home/submission_page.dart';
 import 'package:helius/home/submission_provider.dart';
 import 'package:helius/home/subreddit_list_item.dart';
@@ -22,6 +23,7 @@ class SubredditPage extends StatefulWidget {
 class _SubredditPageState extends State<SubredditPage> {
   final RoutingMessage message;
   var bloc;
+  var appbloc;
   var rebuildCounter = 0;
 
   final _scrollController = ScrollController();
@@ -39,7 +41,7 @@ class _SubredditPageState extends State<SubredditPage> {
 
   @override
   Widget build(BuildContext context) {
-    // bloc = AppProvider.of(context);
+    appbloc = AppProvider.of(context);
     bloc = SubredditProvider.of(context);
     bloc.loadHotFor(subreddit: message.subredditName);
     // _fillStream(bloc: bloc);
@@ -79,7 +81,10 @@ class _SubredditPageState extends State<SubredditPage> {
                       onTap: () => Navigator.of(context).push(
                           CupertinoPageRoute(
                               builder: (BuildContext context) =>
-                                  SubmissionProvider(child: SubmissionPage()))),
+                                  SubmissionProvider(
+                                      bloc: SubmissionBloc(
+                                          instance: appbloc.reddit.value),
+                                      child: SubmissionPage()))),
                       child: SubredditListItem(
                           item: snapshot.data[i],
                           bloc: bloc,
