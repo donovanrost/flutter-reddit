@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
-class Bloc extends Object {
 
+class Bloc extends Object {
   final _repository;
 
   BehaviorSubject get mySubscriptions => _repository.reddit.mySubscriptions;
@@ -16,11 +16,5 @@ class Bloc extends Object {
     _repository.reddit.init();
   }
 
-
-
-  
-
-  void dispose() {
-
-  }
+  void dispose() {}
 }

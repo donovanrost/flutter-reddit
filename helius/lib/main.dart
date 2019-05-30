@@ -61,14 +61,13 @@ class BottomTabBarState extends State<BottomTabBar> {
 
     return CupertinoApp(
         theme: CupertinoThemeData(
-          // primaryColor: CupertinoColors.activeBlue,
-          // barBackgroundColor: CupertinoColors.activeOrange,
-          // textTheme: null,
-          // primaryContrastingColor: null,
-          // brightness: Brightness.dark,
-          // scaffoldBackgroundColor: CupertinoColors.activeBlue,
-
-        ),
+            // primaryColor: CupertinoColors.activeBlue,
+            // barBackgroundColor: CupertinoColors.activeOrange,
+            // textTheme: null,
+            // primaryContrastingColor: null,
+            // brightness: Brightness.dark,
+            // scaffoldBackgroundColor: CupertinoColors.activeBlue,
+            ),
         title: 'Helius',
         home: CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
@@ -100,7 +99,7 @@ class BottomTabBarState extends State<BottomTabBar> {
               case 0:
                 return CupertinoTabView(builder: (context) {
                   return HomePage(context);
-                  // return 
+                  // return
                   // CupertinoPageScaffold(
                   //   child:
                   //   SafeArea(child: HomePage(context)),
@@ -115,7 +114,6 @@ class BottomTabBarState extends State<BottomTabBar> {
               case 2:
                 return CupertinoTabView(builder: (context) {
                   return AccountsPage();
-                  
                 });
               case 3:
                 return CupertinoTabView(builder: (context) {

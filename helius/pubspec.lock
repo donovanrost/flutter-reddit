@@ -48,7 +48,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "9a2bbcf47a49f6462036d687dbd03ea7bb1ab021"
+      resolved-ref: "6a952ea19da5fb9460c43466e23adc46e3ac1694"
       url: "https://github.com/draw-dev/DRAW"
     source: git
     version: "0.5.1+1"

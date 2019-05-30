@@ -2,13 +2,11 @@ import 'package:flutter/cupertino.dart';
 import '../styles.dart';
 
 class SubredditListItem extends StatelessWidget {
-  const SubredditListItem({
-    this.item,
-    this.lastItem,
-  });
+  const SubredditListItem({this.item, this.lastItem, this.bloc});
 
   final item;
   final bool lastItem;
+  final bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +55,21 @@ class SubredditListItem extends StatelessWidget {
           Column(
             children: <Widget>[
               GestureDetector(
-                  onTap: () => print('up voted'),
+                  onTap: () => bloc.upvote(submission: item),
                   child: VoteButton(
+                      submission: item,
                       icon: CupertinoIcons.up_arrow,
                       selectedColor: CupertinoColors.activeOrange,
                       unselectedColor: CupertinoColors.extraLightBackgroundGray,
-                      selected: false)),
+                      selected: _isVoted(item.vote, 'upvoted'))),
               GestureDetector(
-                  onTap: () => print('down voted'),
+                  onTap: () => bloc.downvote(submission: item),
                   child: VoteButton(
+                      submission: item,
                       icon: CupertinoIcons.down_arrow,
                       selectedColor: CupertinoColors.destructiveRed,
                       unselectedColor: CupertinoColors.extraLightBackgroundGray,
-                      selected: false))
+                      selected: _isVoted(item.vote, 'downvoted')))
             ],
           )
         ],
@@ -96,6 +96,11 @@ class SubredditListItem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  _isVoted(vote, whichVote) {
+    vote = vote.toString().split('.').last;
+    return (vote == whichVote) ? true : false;
   }
 }
 
@@ -124,7 +129,6 @@ class SubmissionThumbnail extends StatelessWidget {
       ],
     );
   }
-
 
   //TODO Finish this Widget.
   // I have to make custon assets for the Icons
@@ -169,14 +173,41 @@ class SubmissionThumbnail extends StatelessWidget {
   }
 
   Widget _thumbnailImage(BuildContext context, item) {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(6)),
-      child: Image.network(
-        submission.thumbnail.toString(),
+    if (item.thumbnail.toString() == 'spoiler') {
+      return Container(
         height: 50,
         width: 50,
-      ),
-    );
+        decoration: BoxDecoration(
+          color: CupertinoColors.destructiveRed,
+        ),
+      );
+    } else if (item.thumbnail.toString() == 'default') {
+      //Apollo shows a fullsize compass
+      return Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: CupertinoColors.activeOrange,
+        ),
+      );
+    } else if (item.thumbnail.toString() == 'image') {
+      return Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: CupertinoColors.activeGreen,
+        ),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(6)),
+        child: Image.network(
+          item.thumbnail.toString(),
+          height: 50,
+          width: 50,
+        ),
+      );
+    }
   }
 
   Widget _thumbnailSelf(BuildContext context, item) {
@@ -327,9 +358,11 @@ class VoteButton extends StatelessWidget {
   final Color unselectedColor;
   final IconData icon;
   final bool selected;
+  final submission;
 
   VoteButton(
-      {@required this.selectedColor,
+      {@required this.submission,
+      @required this.selectedColor,
       @required this.unselectedColor,
       @required this.icon,
       @required this.selected});

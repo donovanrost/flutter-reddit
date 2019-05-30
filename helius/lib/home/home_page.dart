@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
 import 'package:helius/home/list_item_base.dart';
 import 'package:helius/home/routing_message.dart';
+import 'package:helius/home/subreddit_bloc.dart';
 import 'package:helius/home/subreddit_page.dart';
+import 'package:helius/home/subreddit_provider.dart';
 import 'package:helius/home/subreddit_tile_model.dart';
 import 'package:helius/styles.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
 class HomePage extends StatelessWidget {
+  var bloc;
+
   List subredditTiles = [
     SubredditTile(
         icon: CupertinoIcons.home,
@@ -40,7 +44,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = AppProvider.of(context);
+    bloc = AppProvider.of(context);
 
     return SafeArea(
         top: false,
@@ -148,10 +152,15 @@ class HomePage extends StatelessWidget {
               return Material(
                   child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(CupertinoPageRoute<void>(
-                            builder: (BuildContext context) => SubredditPage(
-                              message: RoutingMessage(previousPage: 'Subreddits', subredditName: 'All'),
-                                )));
+                        Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (context) => SubredditProvider(
+                                bloc:
+                                    SubredditBloc(instance: bloc.reddit.value),
+                                child: SubredditPage(
+                                  message: RoutingMessage(
+                                      previousPage: 'Subreddits',
+                                      subredditName: 'All'),
+                                ))));
                       },
                       child: ListItemBase(
                           lastItem: index == subredditTiles.length - 1,
@@ -248,11 +257,15 @@ class HomePage extends StatelessWidget {
                               onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute<void>(
                                       builder: (BuildContext context) =>
-                                          SubredditPage( message:
-                                            RoutingMessage(
-                                              subredditName: sublist[i].displayName, 
-                                              previousPage: 'Subreddits')
-                                          ))),
+                                          SubredditProvider(
+                                              bloc: SubredditBloc(
+                                                  instance: bloc.reddit.value),
+                                              child: SubredditPage(
+                                                  message: RoutingMessage(
+                                                      subredditName: sublist[i]
+                                                          .displayName,
+                                                      previousPage:
+                                                          'Subreddits'))))),
                               child: Dismissible(
                                   onDismissed: (_) {
                                     //TODO NEED TO UNSUBSCRIBE FROM THE SUBREDDIT

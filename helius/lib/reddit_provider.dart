@@ -7,11 +7,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class RedditProvider {
   String _secret = '';
   String _identifier = 'Hp4M9q3bOeds3w';
-  String _deviceID = 'pooppooppooppooppooppoop';
+  String _deviceID = 'pooppooppooppooppooppoop1';
   Reddit _reddit;
   String _state = 'thisisarandomstring';
   // Reddit get reddit => _reddit;
@@ -39,31 +38,21 @@ class RedditProvider {
     'subscribe',
     'vote'
   ];
-  final userAgent = 'ios:com.example.helios:v0.0.0 (by /u/pinkywrinkle)';
+  final userAgent = 'ios:com.example.helios:v0.0.1 (by /u/pinkywrinkle)';
 
   RedditProvider() {
     instance.listen((data) {
       _subscriptionsListener(data);
       _moderationsListener(data);
-      
-      
     });
-
   }
 
   Future<Stream> test(String subreddit) async {
     var x = await instance.firstWhere((data) => data != null);
 
-    Stream y =  x.subreddit(subreddit).hot();
+    Stream y = x.subreddit(subreddit).hot();
     return Future.value(y);
   }
-
-
- 
-
-
-
-
 
   _moderationsListener(Reddit _reddit) {
     if (_reddit == null) {

@@ -3,15 +3,16 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:helius/app_provider.dart';
 import 'package:helius/home/routing_message.dart';
+import 'package:helius/home/submission_page.dart';
+import 'package:helius/home/submission_provider.dart';
 import 'package:helius/home/subreddit_list_item.dart';
+import 'package:helius/home/subreddit_provider.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:helius/common/loading_indicator.dart';
 
 class SubredditPage extends StatefulWidget {
-
   RoutingMessage message;
-
 
   SubredditPage({@required this.message});
   @override
@@ -19,10 +20,10 @@ class SubredditPage extends StatefulWidget {
 }
 
 class _SubredditPageState extends State<SubredditPage> {
-final RoutingMessage message;
+  final RoutingMessage message;
   var bloc;
-  final BehaviorSubject subredditContent = BehaviorSubject();
-  StreamSubscription _subscription;
+  var rebuildCounter = 0;
+
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
 
@@ -33,46 +34,21 @@ final RoutingMessage message;
   @override
   void initState() {
     // _SubredditPageState();
-    print(_scrollController.toString());
     super.initState();
-  }
-
-
-
-  _fillStream({bloc})  {
-
-    var s = bloc.test(message.subredditName.toLowerCase());
-    s.then((data) {
-      _subscription =  data.listen((d) {
-        
-        if(!subredditContent.hasValue) {
-          subredditContent.add([d]);
-        } else {
-          List temp = subredditContent.value;
-          temp.add(d);
-          subredditContent.add(temp);
-        }
-
-      });
-
-    });
-
-
-
   }
 
   @override
   Widget build(BuildContext context) {
-    bloc = AppProvider.of(context);
-    _fillStream(bloc: bloc );
-
-
-
-
+    // bloc = AppProvider.of(context);
+    bloc = SubredditProvider.of(context);
+    bloc.loadHotFor(subreddit: message.subredditName);
+    // _fillStream(bloc: bloc);
 
     return SafeArea(
       top: false,
-      child: CupertinoPageScaffold(child: _subredditPage(context)),
+      child: CupertinoPageScaffold(
+          // child: Center(child: Text('asd'))
+          child: _subredditPage(context)),
     );
   }
 
@@ -80,12 +56,11 @@ final RoutingMessage message;
     var unescape = new HtmlUnescape();
 
     return StreamBuilder(
-        stream: subredditContent,
+        stream: bloc.subredditContent,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return SliverList(
               delegate: SliverChildBuilderDelegate(
-                
                   (context, i) => Padding(
                       padding: EdgeInsets.only(top: 50),
                       child: LoadingIndicator()),
@@ -96,12 +71,19 @@ final RoutingMessage message;
               delegate: SliverChildListDelegate([]),
             );
           } else {
-            print('redbuilding.... ${snapshot.data.length}');
+            print('redbuilding.... ${rebuildCounter++}');
+            bloc.pauseStream();
             return SliverList(
               delegate: SliverChildBuilderDelegate(
-                  (context, i) => SubredditListItem(
-                      item: snapshot.data[i],
-                      lastItem: i == snapshot.data.length - 1),
+                  (context, i) => GestureDetector(
+                      onTap: () => Navigator.of(context).push(
+                          CupertinoPageRoute(
+                              builder: (BuildContext context) =>
+                                  SubmissionProvider(child: SubmissionPage()))),
+                      child: SubredditListItem(
+                          item: snapshot.data[i],
+                          bloc: bloc,
+                          lastItem: i == snapshot.data.length - 1)),
                   childCount: snapshot.data.length),
             );
           }
@@ -110,15 +92,9 @@ final RoutingMessage message;
 
   Widget _subredditPageNavigationBar(BuildContext context) {
     return CupertinoSliverNavigationBar(
-      automaticallyImplyLeading: false,
-      automaticallyImplyTitle: false,
-      largeTitle:  Text(message.subredditName),
-      leading: CupertinoButton(
-        padding: EdgeInsets.all(0),
-        child: Icon(CupertinoIcons.add),
-        onPressed: () => Navigator.of(context).pop(), //TODO
-      ),
-      // middle: Text(subredditName),
+      key: GlobalKey(),
+      largeTitle: Text(message.subredditName),
+      previousPageTitle: message.previousPage,
       trailing: CupertinoButton(
         padding: EdgeInsets.all(0),
         child: Text("Edit"),
@@ -133,17 +109,12 @@ final RoutingMessage message;
     _slivers.add(_subredditPageNavigationBar(context));
     _slivers.add(_list(context));
 
-    return CustomScrollView(
-      controller: _scrollController,
-      slivers: _slivers);
+    return CustomScrollView(controller: _scrollController, slivers: _slivers);
   }
 
   @override
   void dispose() {
-    _subscription.pause();
-
-    subredditContent.drain();
-    subredditContent.close();
+    bloc.dispose();
     super.dispose();
   }
 
@@ -151,8 +122,8 @@ final RoutingMessage message;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     if (maxScroll - currentScroll <= _scrollThreshold) {
-        print(currentScroll.toString());
-      // _fillStream(bloc: bloc, whichBatch: 'initial' );
+      print(currentScroll.toString());
+      bloc.resumeStream();
     }
   }
 }
