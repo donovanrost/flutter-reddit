@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
+import 'package:helius/common/vote_botton.dart';
 import 'package:helius/home/routing_message.dart';
 import 'package:helius/home/submission_provider.dart';
 import 'package:helius/home/subreddit_list_item.dart';
@@ -19,29 +21,19 @@ class SubmissionPage extends StatefulWidget {
 }
 
 class _SubmissionPageState extends State<SubmissionPage> {
-  // final RoutingMessage message;
   var bloc;
   var rebuildCounter = 0;
 
-  // final _scrollController = ScrollController();
-  // final _scrollThreshold = 200.0;
-
-  _SubredditPageState(/*this.message*/) {
-    // _scrollController.addListener(_onScroll);
-  }
-
   @override
   void initState() {
-    // _SubredditPageState();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     bloc = SubmissionProvider.of(context);
-    // bloc.loadHotFor(subreddit: message.subredditName);
-    // _fillStream(bloc: bloc);
 
+    MaterialButton();
     return SafeArea(
       top: false,
       child: CupertinoPageScaffold(
@@ -56,23 +48,20 @@ class _SubmissionPageState extends State<SubmissionPage> {
       largeTitle:
           Text('[Submission page placeholder]'), //Text(message.subredditName),
       previousPageTitle: '[Placeholder]', //message.previousPage,
-      trailing: CupertinoButton(
-        padding: EdgeInsets.all(0),
-        child: Text("Edit"),
-        onPressed: () {}, //TODO
-      ),
     );
+  }
+
+  Widget _submissionInfoArea(BuildContext context) {
+    return SliverToBoxAdapter(child: SubmissionActionBar());
   }
 
   Widget _submissionPage(BuildContext context) {
     List<Widget> _slivers = [];
 
     _slivers.add(_submissionPageNavigationBar(context));
-    // _slivers.add(_list(context));
+    _slivers.add(_submissionInfoArea(context));
 
-    return CustomScrollView(
-        // controller: _scrollController,
-        slivers: _slivers);
+    return CustomScrollView(slivers: _slivers);
   }
 
   @override
@@ -80,13 +69,66 @@ class _SubmissionPageState extends State<SubmissionPage> {
     bloc.dispose();
     super.dispose();
   }
+}
 
-  // void _onScroll() {
-  //   final maxScroll = _scrollController.position.maxScrollExtent;
-  //   final currentScroll = _scrollController.position.pixels;
-  //   if (maxScroll - currentScroll <= _scrollThreshold) {
-  //     print(currentScroll.toString());
-  //     bloc.resumeStream();
-  //   }
-  // }
+class SubmissionActionBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        _divider(),
+        Padding(
+          padding: EdgeInsets.only(bottom: 6),
+        ),
+        _buttonRow(),
+        Padding(
+          padding: EdgeInsets.only(top: 6),
+        ),
+        _divider()
+      ],
+    );
+  }
+
+  _divider() {
+    return Container(
+      height: 1,
+      color: CupertinoColors.lightBackgroundGray,
+    );
+  }
+
+  _buttonRow() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Button(
+            onTap: () => print('hi'),
+            color: CupertinoColors.activeOrange,
+            iconData: CupertinoIcons.up_arrow,
+            size: 40),
+        Button(
+            onTap: () => print('hi'),
+            color: CupertinoColors.destructiveRed,
+            iconData: CupertinoIcons.down_arrow,
+            size: 40),
+        Button(
+            onTap: () => print('hi'),
+            color: CupertinoColors.activeGreen,
+            iconData: CupertinoIcons.tag,
+            size: 40),
+        Button(
+            onTap: () => print('hi'),
+            color: CupertinoColors.activeOrange,
+            iconData: CupertinoIcons.reply,
+            animate: false,
+            size: 40),
+        Button(
+            onTap: () => print('hi'),
+            color: CupertinoColors.activeOrange,
+            iconData: CupertinoIcons.share,
+            animate: false,
+            size: 40),
+      ],
+    );
+  }
 }

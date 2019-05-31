@@ -73,7 +73,7 @@ class _SubredditPageState extends State<SubredditPage> {
               delegate: SliverChildListDelegate([]),
             );
           } else {
-            print('redbuilding.... ${rebuildCounter++}');
+            print('rebuilding.... ${rebuildCounter++}');
             bloc.pauseStream();
             return SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -83,6 +83,7 @@ class _SubredditPageState extends State<SubredditPage> {
                               builder: (BuildContext context) =>
                                   SubmissionProvider(
                                       bloc: SubmissionBloc(
+                                          submission: snapshot.data[i],
                                           instance: appbloc.reddit.value),
                                       child: SubmissionPage()))),
                       child: SubredditListItem(
