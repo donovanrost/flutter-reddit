@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
-import 'package:helius/common/vote_botton.dart';
+import 'package:helius/common/botton.dart';
 import 'package:helius/home/routing_message.dart';
 import 'package:helius/home/submission_provider.dart';
 import 'package:helius/home/subreddit_list_item.dart';
