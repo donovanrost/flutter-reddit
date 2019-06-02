@@ -24,6 +24,7 @@ dependencies:
   draw:
     git:
       # url: https://github.com/donovanrost/DRAW.git
+      # ref: dfs
       url: https://github.com/draw-dev/DRAW
   flutter_webview_plugin: ^0.3.5
   shared_preferences: ^0.5.2

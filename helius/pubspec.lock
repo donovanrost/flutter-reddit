@@ -48,10 +48,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "6a952ea19da5fb9460c43466e23adc46e3ac1694"
+      resolved-ref: "93c83e4ab94d87612261dde6df27d7b5c54a3694"
       url: "https://github.com/draw-dev/DRAW"
     source: git
-    version: "0.5.1+1"
+    version: "0.5.2+1"
   flutter:
     dependency: "direct main"
     description: flutter

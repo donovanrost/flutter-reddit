@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:helius/app_provider.dart';
 import 'package:helius/home/routing_message.dart';
@@ -8,12 +6,11 @@ import 'package:helius/home/submission_page.dart';
 import 'package:helius/home/submission_provider.dart';
 import 'package:helius/home/subreddit_list_item.dart';
 import 'package:helius/home/subreddit_provider.dart';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:rxdart/subjects.dart';
+
 import 'package:helius/common/loading_indicator.dart';
 
 class SubredditPage extends StatefulWidget {
-  RoutingMessage message;
+  final RoutingMessage message;
 
   SubredditPage({@required this.message});
   @override
@@ -35,7 +32,6 @@ class _SubredditPageState extends State<SubredditPage> {
 
   @override
   void initState() {
-    // _SubredditPageState();
     super.initState();
   }
 
@@ -44,19 +40,14 @@ class _SubredditPageState extends State<SubredditPage> {
     appbloc = AppProvider.of(context);
     bloc = SubredditProvider.of(context);
     bloc.loadHotFor(subreddit: message.subredditName);
-    // _fillStream(bloc: bloc);
 
     return SafeArea(
       top: false,
-      child: CupertinoPageScaffold(
-          // child: Center(child: Text('asd'))
-          child: _subredditPage(context)),
+      child: CupertinoPageScaffold(child: _subredditPage(context)),
     );
   }
 
   Widget _list(BuildContext context) {
-    var unescape = new HtmlUnescape();
-
     return StreamBuilder(
         stream: bloc.subredditContent,
         builder: (context, snapshot) {

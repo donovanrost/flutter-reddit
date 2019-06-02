@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:helius/common/botton.dart';
 import '../styles.dart';
 
 class SubredditListItem extends StatelessWidget {
@@ -54,22 +55,18 @@ class SubredditListItem extends StatelessWidget {
           ),
           Column(
             children: <Widget>[
-              GestureDetector(
+              Button(
                   onTap: () => bloc.upvote(submission: item),
-                  child: VoteButton(
-                      submission: item,
-                      icon: CupertinoIcons.up_arrow,
-                      selectedColor: CupertinoColors.activeOrange,
-                      unselectedColor: CupertinoColors.extraLightBackgroundGray,
-                      selected: _isVoted(item.vote, 'upvoted'))),
-              GestureDetector(
+                  iconData: CupertinoIcons.up_arrow,
+                  color: CupertinoColors.activeOrange,
+                  size: 40,
+                  selected: _isVoted(item.vote, 'upvoted')),
+              Button(
                   onTap: () => bloc.downvote(submission: item),
-                  child: VoteButton(
-                      submission: item,
-                      icon: CupertinoIcons.down_arrow,
-                      selectedColor: CupertinoColors.destructiveRed,
-                      unselectedColor: CupertinoColors.extraLightBackgroundGray,
-                      selected: _isVoted(item.vote, 'downvoted')))
+                  iconData: CupertinoIcons.down_arrow,
+                  color: CupertinoColors.destructiveRed,
+                  size: 40,
+                  selected: _isVoted(item.vote, 'downvoted')),
             ],
           )
         ],
@@ -353,30 +350,30 @@ class SubredditListItemBottomBar extends StatelessWidget {
   }
 }
 
-class VoteButton extends StatelessWidget {
-  final Color selectedColor;
-  final Color unselectedColor;
-  final IconData icon;
-  final bool selected;
-  final submission;
+// class VoteButton extends StatelessWidget {
+//   final Color selectedColor;
+//   final Color unselectedColor;
+//   final IconData icon;
+//   final bool selected;
+//   final submission;
 
-  VoteButton(
-      {@required this.submission,
-      @required this.selectedColor,
-      @required this.unselectedColor,
-      @required this.icon,
-      @required this.selected});
+//   VoteButton(
+//       {@required this.submission,
+//       @required this.selectedColor,
+//       @required this.unselectedColor,
+//       @required this.icon,
+//       @required this.selected});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          color: (selected) ? selectedColor : unselectedColor,
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        ),
-        child: Icon(icon));
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//         decoration: BoxDecoration(
+//           color: (selected) ? selectedColor : unselectedColor,
+//           borderRadius: BorderRadius.all(Radius.circular(8.0)),
+//         ),
+//         child: Icon(icon));
+//   }
+// }
 
 _flair({@required String text}) {
   return Container(

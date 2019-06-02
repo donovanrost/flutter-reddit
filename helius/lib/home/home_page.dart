@@ -10,7 +10,14 @@ import 'package:helius/home/subreddit_tile_model.dart';
 import 'package:helius/styles.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _HomePageState();
+  }
+}
+
+class _HomePageState extends State<HomePage> {
   var bloc;
 
   List subredditTiles = [
@@ -39,8 +46,6 @@ class HomePage extends StatelessWidget {
         subtitle: 'Posts from moderated subreddits',
         title: 'Moderator Posts')
   ];
-
-  HomePage(context);
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +120,7 @@ class HomePage extends StatelessWidget {
 
   Widget _homePageNavigationBar(BuildContext context) {
     return CupertinoSliverNavigationBar(
+      key: UniqueKey(),
       automaticallyImplyLeading: false,
       automaticallyImplyTitle: false,
       largeTitle: _textInput(),

@@ -98,7 +98,7 @@ class BottomTabBarState extends State<BottomTabBar> {
             switch (index) {
               case 0:
                 return CupertinoTabView(builder: (context) {
-                  return HomePage(context);
+                  return HomePage();
                   // return
                   // CupertinoPageScaffold(
                   //   child:

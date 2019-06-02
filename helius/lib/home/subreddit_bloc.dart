@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
-class SubredditBloc extends Object {
+class SubredditBloc {
   SubredditBloc({@required this.instance});
   final instance;
   BehaviorSubject subredditContent = BehaviorSubject();
@@ -29,10 +29,11 @@ class SubredditBloc extends Object {
   }
 
   pauseStream() => _apiStream.pause();
+
   resumeStream() => _apiStream.resume();
 
-  Future upvote({@required submission}) async {
-    await _isVoted(submission.vote, 'upvoted')
+  void upvote({@required submission}) {
+    _isVoted(submission.vote, 'upvoted')
         ? submission.clearVote(waitForResponse: false)
         : submission.upvote(waitForResponse: false);
     subredditContent.add(subredditContent.value);
@@ -51,7 +52,7 @@ class SubredditBloc extends Object {
   }
 
   void dispose() {
-    _apiStream.pause();
+    _apiStream?.pause();
     subredditContent.drain();
     subredditContent.close();
   }

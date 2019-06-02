@@ -8,17 +8,19 @@ class Button extends StatefulWidget {
   final Color color;
   final double size;
   final bool animate;
+  final bool selected;
 
   Button(
       {@required this.onTap,
       this.iconData,
       this.color,
       this.size,
-      this.animate = true});
+      this.animate = true,
+      this.selected = false});
 
   @override
-  _ButtonState createState() => _ButtonState(
-      this.onTap, this.iconData, this.color, this.size, this.animate);
+  _ButtonState createState() => _ButtonState(this.onTap, this.iconData,
+      this.color, this.size, this.animate, this.selected);
 }
 
 class _ButtonState extends State<Button> with TickerProviderStateMixin {
@@ -27,7 +29,9 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
   final color;
   final size;
   final animate;
-  _ButtonState(this.onTap, this.iconData, this.color, this.size, this.animate);
+  bool selected;
+  _ButtonState(this.onTap, this.iconData, this.color, this.size, this.animate,
+      this.selected);
   AnimationController _controller;
   Animation _animation;
 
@@ -39,7 +43,9 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
       vsync: this,
     );
 
-    _animation = Tween(begin: 0.0, end: size).animate(CurvedAnimation(
+    _animation = Tween(begin: 0.0, end: size)
+        // Tween(begin: (selected) ? size : 0.0, end: (selected) ? 0.0 : size)
+        .animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.elasticInOut,
     ));
@@ -60,7 +66,8 @@ class _ButtonState extends State<Button> with TickerProviderStateMixin {
         color: color,
         iconData: iconData,
         size: size,
-        animate: this.animate);
+        animate: this.animate,
+        selected: this.selected);
   }
 }
 
@@ -73,7 +80,8 @@ class ButtonContainer extends AnimatedWidget {
       this.iconData,
       this.color,
       this.size,
-      this.animate})
+      this.animate,
+      this.selected})
       : super(key: key, listenable: animation);
 
   // Animation<double> get _progress => listenable;
@@ -83,20 +91,27 @@ class ButtonContainer extends AnimatedWidget {
   final Color color;
   final double size;
   final bool animate;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
     Animation animation = listenable;
+    if (selected == true) {
+      controller.forward();
+    } else {
+      controller.reverse();
+    }
+    // (selected == true) ? controller.forward() : controller.reverse();
 
     return Center(
         child: GestureDetector(
             onTap: () {
               if (animation.isCompleted || animation.isDismissed) this.onTap();
 
-              if (animate)
-                animation.isCompleted
-                    ? controller.reverse()
-                    : controller.forward();
+              // if (animate)
+              //   animation.isCompleted
+              //       ? controller.reverse()
+              //       : controller.forward();
             },
             child: Stack(alignment: Alignment.center, children: [
               _baseContainer(animation),
