@@ -1,16 +1,9 @@
-import 'dart:async';
-
 import 'package:draw/draw.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:helius/app_provider.dart';
 import '../common/common.dart';
-import 'package:helius/home/routing_message.dart';
 import 'package:helius/home/submission_provider.dart';
-import 'package:helius/home/subreddit_list_item.dart';
-import 'package:helius/home/subreddit_provider.dart';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:rxdart/subjects.dart';
+
 import 'package:helius/common/loading_indicator.dart';
 
 class SubmissionPage extends StatefulWidget {
@@ -37,50 +30,56 @@ class _SubmissionPageState extends State<SubmissionPage> {
     return SafeArea(
       top: false,
       child: CupertinoPageScaffold(
-          navigationBar: CustomCupertinoNavigationBar(
-            key: new UniqueKey(),
-            onTap: () => null,
-            middle: Text('asd'),
-          ),
-          child: SafeArea(child: _submissionPage(context))),
+        navigationBar: CustomCupertinoNavigationBar(
+          key: new UniqueKey(),
+          onTap: () => null,
+          middle: Text('asd'),
+        ),
+        child: SafeArea(child: _submissionPage(context)),
+      ),
     );
   }
 
   Widget _commentList(BuildContext context) {
     return StreamBuilder(
-        stream: bloc.comments,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                  (context, i) => Padding(
+      stream: bloc.comments,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+                (context, i) => Padding(
                       padding: EdgeInsets.only(top: 50),
-                      child: LoadingIndicator()),
-                  childCount: 1),
-            );
-          } else if (snapshot.hasError) {
-            return SliverList(
-              delegate: SliverChildListDelegate([]),
-            );
-          } else {
-            // print(snapshot.data[1].toString());
-            return SliverList(
-                delegate: SliverChildListDelegate(_list(snapshot.data)));
-          }
-        });
+                      child: LoadingIndicator(),
+                    ),
+                childCount: 1),
+          );
+        } else if (snapshot.hasError) {
+          return SliverList(
+            delegate: SliverChildListDelegate([]),
+          );
+        } else {
+          // print(snapshot.data[1].toString());
+          return SliverList(
+            delegate: SliverChildListDelegate(_list(snapshot.data)),
+          );
+        }
+      },
+    );
   }
 
   List<Widget> _list(List comments) {
     return comments
-        .map<Widget>((m) =>
-            (m is Comment) ? _Comment(comment: m) : Text('More Comments'))
+        .map<Widget>(
+          (m) => (m is Comment) ? _Comment(comment: m) : Text('More Comments'),
+        )
         .toList();
   }
 
   Widget _submissionImage(BuildContext context, submission) {
     print(submission.preview[0].source.url);
     return SliverToBoxAdapter(
-        child: Image.network(submission.preview[0].source.url.toString()));
+      child: Image.network(submission.preview[0].source.url.toString()),
+    );
   }
 
   Widget _submissionInfoArea(BuildContext context) {
@@ -117,15 +116,8 @@ class SubmissionActionBar extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 6),
         ),
-        _divider()
+        DragoDivider()
       ],
-    );
-  }
-
-  _divider() {
-    return Container(
-      height: 1,
-      color: CupertinoColors.lightBackgroundGray,
     );
   }
 
@@ -168,7 +160,6 @@ class SubmissionActionBar extends StatelessWidget {
 
 class _Comment extends StatelessWidget {
   final Comment comment;
-  // List<Widget> comments = [];
 
   _Comment({
     @required this.comment,
@@ -176,17 +167,35 @@ class _Comment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(children: [
-      SizedBox.expand(
-          child: Container(width: 4, color: CupertinoColors.destructiveRed)),
-      Column(
-        children: <Widget>[
-          _topBar(context, this.comment),
-          _body(context, this.comment),
-          DragoDivider(),
-        ],
-      )
-    ]);
+    return Padding(
+        padding: EdgeInsets.only(left: this.comment.depth * 4.0 + 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border(
+                  left: BorderSide(
+                      width: 4, color: CupertinoColors.destructiveRed))),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _topBar(context, this.comment),
+                _body(context, this.comment),
+                DragoDivider(),
+              ],
+            ),
+          ),
+        ));
+    // return Row(children: [
+    //   Expanded(child: Container(color: Colors.red)),
+    //   Column(
+    //     children: <Widget>[
+    // _topBar(context, this.comment),
+    // _body(context, this.comment),
+    // DragoDivider(),
+    //     ],
+    //   )
+    // ]);
   }
 
   _topBar(BuildContext context, Comment comment) {
@@ -196,7 +205,9 @@ class _Comment extends StatelessWidget {
         Row(
           children: <Widget>[
             _author(context, comment),
-            _score(context, comment)
+            SubmissionScore(
+              score: comment.score,
+            )
           ],
         ),
         Row(
@@ -207,16 +218,15 @@ class _Comment extends StatelessWidget {
   }
 
   _body(BuildContext context, Comment comment) {
-    return Text(comment.body);
+    return Text(
+      comment.body,
+      textAlign: TextAlign.start,
+    );
   }
 
   //TODO refactor all of these into class widgets and put in 'common' folder
   _author(BuildContext context, Comment comment) {
     return Text(comment.author);
-  }
-
-  _score(BuildContext context, Comment comment) {
-    return Text(comment.score.toString());
   }
 
   _options(BuildContext context, Comment comment) {
