@@ -4,8 +4,7 @@ import 'package:draw/draw.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
-import 'package:helius/common/botton.dart';
-import 'package:helius/common/navbar.dart';
+import '../common/common.dart';
 import 'package:helius/home/routing_message.dart';
 import 'package:helius/home/submission_provider.dart';
 import 'package:helius/home/subreddit_list_item.dart';
@@ -78,15 +77,6 @@ class _SubmissionPageState extends State<SubmissionPage> {
         .toList();
   }
 
-  // Widget _comment(BuildContext context, comment) {
-  //   if (comment is MoreComments) {
-  //     print(comment.toString());
-  //     return Text('More Comments');
-  //   } else {
-  //     return Text(comment.upvotes.toString());
-  //   }
-  // }
-
   Widget _submissionImage(BuildContext context, submission) {
     print(submission.preview[0].source.url);
     return SliverToBoxAdapter(
@@ -119,7 +109,7 @@ class SubmissionActionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        _divider(),
+        DragoDivider(),
         Padding(
           padding: EdgeInsets.only(bottom: 6),
         ),
@@ -184,23 +174,52 @@ class _Comment extends StatelessWidget {
     @required this.comment,
   });
 
-  // List<Widget> _test(comment) {
-  //   if (comment.replies != null) {
-  //     return comment?.replies?.comments
-  //         ?.map<Widget>((c) =>
-  //             (c is Comment) ? _Comment(comment: c) : Text('More Comments'))
-  //         ?.toList();
-  //   } else {
-  //     return [SizedBox.shrink()];
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // _test(this.comment);
-    return Padding(
-      padding: EdgeInsets.only(left: 4.0 * this.comment.depth),
-      child: Text('${this.comment.depth} -- ${this.comment.body}'),
+    return Wrap(children: [
+      SizedBox.expand(
+          child: Container(width: 4, color: CupertinoColors.destructiveRed)),
+      Column(
+        children: <Widget>[
+          _topBar(context, this.comment),
+          _body(context, this.comment),
+          DragoDivider(),
+        ],
+      )
+    ]);
+  }
+
+  _topBar(BuildContext context, Comment comment) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            _author(context, comment),
+            _score(context, comment)
+          ],
+        ),
+        Row(
+          children: <Widget>[_options(context, comment)],
+        )
+      ],
     );
+  }
+
+  _body(BuildContext context, Comment comment) {
+    return Text(comment.body);
+  }
+
+  //TODO refactor all of these into class widgets and put in 'common' folder
+  _author(BuildContext context, Comment comment) {
+    return Text(comment.author);
+  }
+
+  _score(BuildContext context, Comment comment) {
+    return Text(comment.score.toString());
+  }
+
+  _options(BuildContext context, Comment comment) {
+    return Icon(CupertinoIcons.ellipsis);
   }
 }

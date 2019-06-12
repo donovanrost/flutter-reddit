@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:helius/common/botton.dart';
+import 'package:helius/common/common.dart';
 import '../styles.dart';
 
 class SubredditListItem extends StatelessWidget {
@@ -43,7 +43,7 @@ class SubredditListItem extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w100),
                       ),
-                    if (item.spoiler) _flair(text: 'SPOILER'),
+                    if (item.spoiler) Flair(flairText: 'SPOILER'),
                   ]),
                   Padding(
                     padding: EdgeInsets.all(8),
@@ -240,12 +240,11 @@ class SubredditListItemBottomBar extends StatelessWidget {
               fontSize: 12.0,
             )),
         if (item.authorFlairText != null && item.authorFlairText.length > 0)
-          _flair(text: item.authorFlairText),
-        if (item.upvotes != null) _submissionScore(score: item.score),
+          Flair(flairText: item.authorFlairText),
+        if (item.upvotes != null) SubmissionScore(score: item.score),
         if (item.numComments != null)
-          _submissionNumComments(numComments: item.numComments),
-        if (item.createdUtc != null)
-          _submissionAge(createdUtc: item.createdUtc),
+          SubmissionNumComments(numComments: item.numComments),
+        if (item.createdUtc != null) SubmissionAge(createdUtc: item.createdUtc),
         _optionsButton(context, item)
       ],
     );
@@ -287,67 +286,67 @@ class SubredditListItemBottomBar extends StatelessWidget {
         child: Icon(CupertinoIcons.ellipsis));
   }
 
-  _submissionScore({@required int score}) {
-    return IntrinsicWidth(
-        child: Row(
-      children: <Widget>[
-        Icon(
-          CupertinoIcons.up_arrow,
-          size: 12,
-        ),
-        Text(score.toString(),
-            style: TextStyle(
-              fontSize: 12.0,
-            ))
-      ],
-    ));
-  }
+  // _submissionScore({@required int score}) {
+  //   return IntrinsicWidth(
+  //       child: Row(
+  //     children: <Widget>[
+  //       Icon(
+  //         CupertinoIcons.up_arrow,
+  //         size: 12,
+  //       ),
+  //       Text(score.toString(),
+  //           style: TextStyle(
+  //             fontSize: 12.0,
+  //           ))
+  //     ],
+  //   ));
+  // }
 
-  _submissionNumComments({@required int numComments}) {
-    return IntrinsicWidth(
-        child: Row(
-      children: <Widget>[
-        Icon(
-          CupertinoIcons.conversation_bubble,
-          size: 12,
-        ),
-        Text(numComments.toString(),
-            style: TextStyle(
-              fontSize: 12.0,
-            ))
-      ],
-    ));
-  }
+  // _submissionNumComments({@required int numComments}) {
+  //   return IntrinsicWidth(
+  //       child: Row(
+  //     children: <Widget>[
+  //       Icon(
+  //         CupertinoIcons.conversation_bubble,
+  //         size: 12,
+  //       ),
+  //       Text(numComments.toString(),
+  //           style: TextStyle(
+  //             fontSize: 12.0,
+  //           ))
+  //     ],
+  //   ));
+  // }
 
-  _submissionAge({@required DateTime createdUtc}) {
-    return IntrinsicWidth(
-        child: Row(
-      children: <Widget>[
-        Icon(
-          CupertinoIcons.clock,
-          size: 12,
-        ),
-        Text(_formattedAge(_age(createdUtc)),
-            style: TextStyle(
-              fontSize: 12.0,
-            ))
-      ],
-    ));
-  }
+  // _submissionAge({@required DateTime createdUtc}) {
+  //   return IntrinsicWidth(
+  //       child: Row(
+  //     children: <Widget>[
+  //       Icon(
+  //         CupertinoIcons.clock,
+  //         size: 12,
+  //       ),
+  //       Text(_formattedAge(_age(createdUtc)),
+  //           style: TextStyle(
+  //             fontSize: 12.0,
+  //           ))
+  //     ],
+  //   ));
+  // }
 
-  Duration _age(DateTime given) => DateTime.now().difference(given);
+  // Duration _age(DateTime given) => DateTime.now().difference(given);
 
-  String _formattedAge(Duration age) {
-    if (age.inDays > 0) {
-      return '${age.inDays.toString()}d';
-    } else if (age.inHours > 0) {
-      return '${age.inHours.toString()}h';
-    } else if (age.inMinutes > 0) {
-      return '${age.inMinutes.toString()}m';
-    } else {
-      return '${age.inSeconds.toString()}s';
-    }
-  }
+  // String _formattedAge(Duration age) {
+  //   if (age.inDays > 0) {
+  //     return '${age.inDays.toString()}d';
+  //   } else if (age.inHours > 0) {
+  //     return '${age.inHours.toString()}h';
+  //   } else if (age.inMinutes > 0) {
+  //     return '${age.inMinutes.toString()}m';
+  //   } else {
+  //     return '${age.inSeconds.toString()}s';
+  //   }
+  // }
 }
 
 // class VoteButton extends StatelessWidget {
@@ -375,13 +374,13 @@ class SubredditListItemBottomBar extends StatelessWidget {
 //   }
 // }
 
-_flair({@required String text}) {
-  return Container(
-      child: Padding(
-        padding: EdgeInsets.all(4),
-        child: Text(text, style: TextStyle(fontSize: 12)),
-      ),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: CupertinoColors.lightBackgroundGray));
-}
+// _flair({@required String text}) {
+//   return Container(
+//       child: Padding(
+//         padding: EdgeInsets.all(4),
+//         child: Text(text, style: TextStyle(fontSize: 12)),
+//       ),
+//       decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(4),
+//           color: CupertinoColors.lightBackgroundGray));
+// }
