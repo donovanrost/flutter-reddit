@@ -167,35 +167,93 @@ class _Comment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(left: this.comment.depth * 4.0 + 8.0),
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border(
-                  left: BorderSide(
-                      width: 4, color: CupertinoColors.destructiveRed))),
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _topBar(context, this.comment),
-                _body(context, this.comment),
-                DragoDivider(),
-              ],
-            ),
+    return (this.comment.depth == 0)
+        ? _topLevelComment(context, this.comment)
+        : _notTopLevelComment(context, this.comment);
+
+    // return Padding(
+    //     padding: EdgeInsets.only(left: this.comment.depth * 4.0),
+    //     child: Column(
+    //       children: <Widget>[
+    //         Padding(
+    //           padding: EdgeInsets.symmetric(horizontal: 8.0),
+    //           child: DragoDivider(),
+    //         ),
+    //         Padding(
+    //           padding: EdgeInsets.all(8.0),
+    //           child: Container(
+    //             decoration: BoxDecoration(
+    //               border: Border(
+    //                 left: BorderSide(
+    //                     width: 4, color: CupertinoColors.destructiveRed),
+    //               ),
+    //             ),
+    //             child: Padding(
+    //               padding: EdgeInsets.only(left: 8.0),
+    //               child: Column(
+    //                 crossAxisAlignment: CrossAxisAlignment.start,
+    //                 children: <Widget>[
+    //                   _topBar(context, this.comment),
+    //                   _body(context, this.comment),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ));
+  }
+
+  _topLevelComment(BuildContext context, comment) {
+    return Column(
+      children: <Widget>[
+        DragoDivider(),
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _topBar(context, comment),
+              _body(context, comment)
+            ],
           ),
+        )
+      ],
+    );
+  }
+
+  _notTopLevelComment(BuildContext context, comment) {
+    return Padding(
+        padding: EdgeInsets.only(left: this.comment.depth * 4.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: DragoDivider(),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(
+                        width: 4, color: CupertinoColors.destructiveRed),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _topBar(context, this.comment),
+                      _body(context, this.comment),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ));
-    // return Row(children: [
-    //   Expanded(child: Container(color: Colors.red)),
-    //   Column(
-    //     children: <Widget>[
-    // _topBar(context, this.comment),
-    // _body(context, this.comment),
-    // DragoDivider(),
-    //     ],
-    //   )
-    // ]);
   }
 
   _topBar(BuildContext context, Comment comment) {
@@ -211,7 +269,12 @@ class _Comment extends StatelessWidget {
           ],
         ),
         Row(
-          children: <Widget>[_options(context, comment)],
+          children: <Widget>[
+            _options(context, comment),
+            SubmissionAge(
+              createdUtc: comment.createdUtc,
+            )
+          ],
         )
       ],
     );
