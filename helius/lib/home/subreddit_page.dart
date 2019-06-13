@@ -70,13 +70,16 @@ class _SubredditPageState extends State<SubredditPage> {
               delegate: SliverChildBuilderDelegate(
                   (context, i) => GestureDetector(
                       onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
+                            CupertinoPageRoute(
                               builder: (BuildContext context) =>
                                   SubmissionProvider(
-                                      bloc: SubmissionBloc(
-                                          submission: snapshot.data[i],
-                                          instance: appbloc.reddit.value),
-                                      child: SubmissionPage()))),
+                                    bloc: SubmissionBloc(
+                                        submission: snapshot.data[i],
+                                        instance: appbloc.reddit.value),
+                                    child: SubmissionPage(),
+                                  ),
+                            ),
+                          ),
                       child: SubredditListItem(
                           item: snapshot.data[i],
                           bloc: bloc,

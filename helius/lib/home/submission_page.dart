@@ -3,8 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../common/common.dart';
 import 'package:helius/home/submission_provider.dart';
-
-import 'package:helius/common/loading_indicator.dart';
+import './comment.dart';
 
 class SubmissionPage extends StatefulWidget {
   // RoutingMessage message;
@@ -33,7 +32,8 @@ class _SubmissionPageState extends State<SubmissionPage> {
         navigationBar: CustomCupertinoNavigationBar(
           key: new UniqueKey(),
           onTap: () => null,
-          middle: Text('asd'),
+          previousPageTitle: bloc.submission.subreddit.displayName,
+          middle: Text('${bloc.submission.numComments} comments'),
         ),
         child: SafeArea(child: _submissionPage(context)),
       ),
@@ -70,11 +70,14 @@ class _SubmissionPageState extends State<SubmissionPage> {
   List<Widget> _list(List comments) {
     return comments
         .map<Widget>(
-          (m) => (m is Comment) ? _Comment(comment: m) : Text('More Comments'),
+          (m) => (m is Comment)
+              ? CommentWidget(comment: m)
+              : Text('More Comments'),
         )
         .toList();
   }
 
+  //TODO THIS IS NOT RIGHT, BUT JUST A PLACEHOLDER
   Widget _submissionImage(BuildContext context, submission) {
     print(submission.preview[0].source.url);
     return SliverToBoxAdapter(
@@ -116,7 +119,6 @@ class SubmissionActionBar extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 6),
         ),
-        DragoDivider()
       ],
     );
   }
@@ -155,144 +157,5 @@ class SubmissionActionBar extends StatelessWidget {
             size: 40),
       ],
     );
-  }
-}
-
-class _Comment extends StatelessWidget {
-  final Comment comment;
-
-  _Comment({
-    @required this.comment,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return (this.comment.depth == 0)
-        ? _topLevelComment(context, this.comment)
-        : _notTopLevelComment(context, this.comment);
-
-    // return Padding(
-    //     padding: EdgeInsets.only(left: this.comment.depth * 4.0),
-    //     child: Column(
-    //       children: <Widget>[
-    //         Padding(
-    //           padding: EdgeInsets.symmetric(horizontal: 8.0),
-    //           child: DragoDivider(),
-    //         ),
-    //         Padding(
-    //           padding: EdgeInsets.all(8.0),
-    //           child: Container(
-    //             decoration: BoxDecoration(
-    //               border: Border(
-    //                 left: BorderSide(
-    //                     width: 4, color: CupertinoColors.destructiveRed),
-    //               ),
-    //             ),
-    //             child: Padding(
-    //               padding: EdgeInsets.only(left: 8.0),
-    //               child: Column(
-    //                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                 children: <Widget>[
-    //                   _topBar(context, this.comment),
-    //                   _body(context, this.comment),
-    //                 ],
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ],
-    //     ));
-  }
-
-  _topLevelComment(BuildContext context, comment) {
-    return Column(
-      children: <Widget>[
-        DragoDivider(),
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _topBar(context, comment),
-              _body(context, comment)
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  _notTopLevelComment(BuildContext context, comment) {
-    return Padding(
-        padding: EdgeInsets.only(left: this.comment.depth * 4.0),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: DragoDivider(),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                        width: 4, color: CupertinoColors.destructiveRed),
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _topBar(context, this.comment),
-                      _body(context, this.comment),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ));
-  }
-
-  _topBar(BuildContext context, Comment comment) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            _author(context, comment),
-            SubmissionScore(
-              score: comment.score,
-            )
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            _options(context, comment),
-            SubmissionAge(
-              createdUtc: comment.createdUtc,
-            )
-          ],
-        )
-      ],
-    );
-  }
-
-  _body(BuildContext context, Comment comment) {
-    return Text(
-      comment.body,
-      textAlign: TextAlign.start,
-    );
-  }
-
-  //TODO refactor all of these into class widgets and put in 'common' folder
-  _author(BuildContext context, Comment comment) {
-    return Text(comment.author);
-  }
-
-  _options(BuildContext context, Comment comment) {
-    return Icon(CupertinoIcons.ellipsis);
   }
 }

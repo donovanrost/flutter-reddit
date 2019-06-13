@@ -138,7 +138,12 @@ class _CustomCupertinoNavigationBarState
       // onLongPressMoveUpdate: widget.onLongPressMoveUpdate,
       // onLongPressUp: widget.onLongPressUp,
       // onLongPressEnd: widget.onLongPressEnd,
-      child: CupertinoNavigationBar(leading: widget.leading),
+      child: CupertinoNavigationBar(
+        leading: widget.leading,
+        middle: widget.middle,
+        trailing: widget.trailing,
+        previousPageTitle: widget.previousPageTitle,
+      ),
     );
   }
 }
