@@ -6,11 +6,11 @@ import './gfycat_model.dart';
 
 class GfycatApiProvider {
   Client client = Client();
-  // final _apiKey = '802b2c4b88ea1183e50e6b285a27696e';
   final _baseUrl = "https://api.gfycat.com/v1/gfycats";
 
   Future<GfycatModel> fetchGfycat({@required String url}) async {
     final response = await client.get("$_baseUrl" + _parsedURL(url));
+    print("GIFYCAT FINAL URL --- " + _baseUrl + _parsedURL(url));
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       return GfycatModel.fromJson(json.decode(response.body));
@@ -22,7 +22,7 @@ class GfycatApiProvider {
 
   String _parsedURL(String url) {
     var name = url.substring(url.lastIndexOf("/"),
-        url.length - url.lastIndexOf("/")); //? this may be incorrect
+        url.length /*- url.lastIndexOf("/")*/); //? this may be incorrect
     if (!name.startsWith("/")) {
       name = "/" + name;
     }

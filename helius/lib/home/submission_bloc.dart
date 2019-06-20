@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:helius/classes/content_type.dart';
 import 'package:helius/classes/image_model.dart';
+import 'package:helius/classes/video_model.dart';
 import 'package:helius/home/repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:draw/draw.dart';
@@ -32,11 +33,17 @@ class SubmissionBloc extends Object {
 
   void test() {
     Type type = ContentType.getContentTypeFromURL(submission.url.toString());
+    print("$type");
 
     if (ContentType.displayImage(type)) {
       _repository
           .fetchImage(submission.url.toString())
           .then((ImageModel image) => content.add(image));
+    }
+    if (ContentType.displayVideo(type)) {
+      _repository
+          .fetchVideo(submission.url.toString())
+          .then((VideoModel video) => content.add(video));
     }
   }
 

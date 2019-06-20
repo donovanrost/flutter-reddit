@@ -408,6 +408,7 @@ class ContentType {
       case Type.VID_ME:
       case Type.VIDEO:
       case Type.GIF:
+      case Type.VREDDIT_REDIRECT:
         return true;
       default:
         return false;

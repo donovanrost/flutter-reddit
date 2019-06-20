@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helius/classes/content_type.dart';
 import 'package:helius/classes/image_model.dart';
+import 'package:helius/classes/video_model.dart';
 import 'package:helius/common/media_player.dart';
 import '../common/common.dart';
 import 'package:helius/home/submission_provider.dart';
@@ -63,11 +64,16 @@ class _SubmissionPageState extends State<SubmissionPage> {
             if (snapshot.data is ImageModel) {
               // print('${snapshot.data} ---- ${snapshot.data.url}');
               return Container(child: Image.network(snapshot.data.url));
-            } else {
-              return Container(
-                child: Text('Not an image'),
+            }
+
+            if (snapshot.data is VideoModel) {
+              return MediaPlayer(
+                url: snapshot.data.url,
               );
             }
+            return Container(
+              child: Text('Some other type of conent'),
+            );
           }
         });
   }
