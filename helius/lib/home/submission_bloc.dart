@@ -21,8 +21,6 @@ import 'package:draw/draw.dart';
 */
 
 class SubmissionBloc extends Object {
-  SubmissionBloc({@required this.instance, @required this.submission});
-
   Repository _repository = Repository();
 
   final Reddit instance;
@@ -30,8 +28,7 @@ class SubmissionBloc extends Object {
   StreamSubscription _apiStream;
   final BehaviorSubject<List> comments = BehaviorSubject();
   final BehaviorSubject content = BehaviorSubject();
-
-  void test() {
+  SubmissionBloc({@required this.instance, @required this.submission}) {
     Type type = ContentType.getContentTypeFromURL(submission.url.toString());
     print("$type");
 

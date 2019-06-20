@@ -18,9 +18,17 @@ class VideoFetcher {
       if (!url.endsWith('/')) {
         url += "/";
       }
+
+      // I dont know if this is a good way to handle this case.
+      // It's possible that not all videos of this type have a DASH_360 version
+      // I have seen some with DASH_720, but not all have that.
       url += "DASH_360";
       return VideoModel(url: url);
     } else {
+      // This case is also kind of wonky.
+      // Gifs don't play well with Chewie.
+      // So I need to find a good way to deal with this too
+
       if (url.endsWith('gifv')) {
         url = url.replaceAll("gifv", 'mp4');
       }

@@ -31,7 +31,6 @@ class _SubmissionPageState extends State<SubmissionPage> {
   @override
   Widget build(BuildContext context) {
     bloc = SubmissionProvider.of(context);
-    bloc.test(); //! remove
 
     bloc.loadHotFor();
     return SafeArea(

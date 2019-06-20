@@ -40,7 +40,7 @@ class GfycatItem {
   String gfyName;
   String avgColor;
   String rating;
-  int widgth;
+  int width;
   int height;
   double frameRate;
   int numFrames;
@@ -51,55 +51,96 @@ class GfycatItem {
   int source;
   ContentURLs contentURLs;
 
-  GfycatItem({this.mp4URL});
+  GfycatItem(
+      {this.tags,
+      this.languageCategories,
+      this.domainWhitelist,
+      this.geoWhitelist,
+      this.published,
+      this.nsfw,
+      this.gatekeeper,
+      this.mp4URL,
+      this.webmURL,
+      this.mobileURL,
+      this.mobilePosterURL,
+      this.extraLemmas,
+      this.thumb100PosterURL,
+      this.miniURL,
+      this.miniPosterURL,
+      this.max5mbGIF,
+      this.title,
+      this.max2mbGIF,
+      this.max1mbGIF,
+      this.posterURL,
+      this.languageText,
+      this.views,
+      this.userName,
+      this.description,
+      this.hasTransparency,
+      this.hasAudio,
+      this.likes,
+      this.dislikes,
+      this.gfyNumber,
+      this.gfyID,
+      this.gfyName,
+      this.avgColor,
+      this.rating,
+      this.width,
+      this.height,
+      this.frameRate,
+      this.numFrames,
+      this.mp4Size,
+      this.webmSize,
+      this.createDate,
+      this.md5,
+      this.source,
+      this.contentURLs});
 
   factory GfycatItem.fromJson(Map<String, dynamic> json) {
-    print(json['mp4Url'].toString());
-    return GfycatItem(mp4URL: json['mp4Url']);
-    // tags = json['tags'];
-    // languageCategories = json['languageCategories'];
-    // domainWhitelist = json['domainWhitelist'];
-    // geoWhitelist = json['geoWhitelist'];
-    // published = json['published'];
-    // nsfw = json['nsfw'];
-    // gatekeeper = json['gatekeeper'];
-    // mp4URL = json['mp4Url'];
-    // print(json['mp4Url'].toString());
-    // print(mp4URL);
-    // webmURL = json['webmUrl'];
-    // mobileURL = json['mobileUrl'];
-    // mobilePosterURL = json['mobilePosterUrl'];
-    // extraLemmas = json['extraLemmas'];
-    // thumb100PosterURL = json['thumb100PosterUrl'];
-    // miniURL = json['miniUrl'];
-    // miniPosterURL = json['miniPosterUrl'];
-    // max5mbGIF = json['max5mbGif'];
-    // title = json['title'];
-    // max2mbGIF = json['max2mbGif'];
-    // max1mbGIF = json['max1mbGif'];
-    // posterURL = json['posterUrl'];
-    // languageText = json['languageText'];
-    // views = json['views'];
-    // userName = json['userName'];
-    // description = json['description'];
-    // hasTransparency = json[''];
-    // hasAudio = json['hasAudio'];
-    // likes = json['likes'];
-    // dislikes = json['dislikes'];
-    // gfyNumber = json['gfyNumber'];
-    // gfyID = json['gfyId'];
-    // gfyName = json['gfyName'];
-    // avgColor = json['avgColor'];
-    // rating = json['rating'];
-    // widgth = json['widgth'];
-    // height = json['height'];
-    // frameRate = json['frameRate'];
-    // numFrames = json['numFrames'];
-    // mp4Size = json['mp4Size'];
-    // webmSize = json['webmSize'];
-    // createDate = json['createDate'];
-    // md5 = json['md5'];
-    // source = json['source'];
+    return GfycatItem(
+      tags: json['tags'],
+      languageCategories: json['languageCategories'],
+      domainWhitelist: json['domainWhitelist'],
+      geoWhitelist: json['geoWhitelist'],
+      published: json['published'],
+      nsfw: json['nsfw'],
+      gatekeeper: json['gatekeeper'],
+      mp4URL: json['mp4Url'],
+      webmURL: json['webmUrl'],
+      mobileURL: json['mobileUrl'],
+      mobilePosterURL: json['mobilePosterUrl'],
+      extraLemmas: json['extraLemmas'],
+      thumb100PosterURL: json['thumb100PosterUrl'],
+      miniURL: json['miniUrl'],
+      miniPosterURL: json['miniPosterUrl'],
+      max5mbGIF: json['max5mbGif'],
+      title: json['title'],
+      max2mbGIF: json['max2mbGif'],
+      max1mbGIF: json['max1mbGif'],
+      posterURL: json['posterUrl'],
+      languageText: json['languageText'],
+      views: json['views'],
+      userName: json['userName'],
+      description: json['description'],
+      hasTransparency: json[''],
+      hasAudio: json['hasAudio'],
+      likes: json['likes'],
+      dislikes: json['dislikes'],
+      gfyNumber: json['gfyNumber'],
+      gfyID: json['gfyId'],
+      gfyName: json['gfyName'],
+      avgColor: json['avgColor'],
+      rating: json['rating'],
+      width: json['width'],
+      height: json['height'],
+      frameRate: json['frameRate'],
+      numFrames: json['numFrames'],
+      mp4Size: json['mp4Size'],
+      webmSize: json['webmSize'],
+      createDate: json['createDate'],
+      md5: json['md5'],
+      source: json['source'],
+    );
   }
 }
 

@@ -12,18 +12,15 @@ class MediaPlayer extends StatefulWidget {
 class _MediaPlayerState extends State<MediaPlayer> {
   var videoPlayerController;
 
-//https://v.redd.it/7fpx9a4xvi431/DASH_360
   var chewieController;
 
   @override
   void initState() {
     videoPlayerController = VideoPlayerController.network(widget.url);
-    // videoPlayerController = VideoPlayerController.network(
-    //     "https://v.redd.it/63jiq0c2be531/DASH_720?source=fallback");
 
     chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
-      aspectRatio: 3 / 2,
+      // aspectRatio: 3 / 2,
       autoPlay: true,
       looping: true,
     );

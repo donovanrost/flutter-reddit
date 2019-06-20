@@ -31,15 +31,4 @@ class GfycatApiProvider {
     }
     return name.split(".")[0];
   }
-
-  // Future<TrailerModel> fetchTrailer(int movieId) async {
-  //   final response =
-  //       await client.get("$_baseUrl/$movieId/videos?api_key=$_apiKey");
-
-  //   if (response.statusCode == 200) {
-  //     return TrailerModel.fromJson(json.decode(response.body));
-  //   } else {
-  //     throw Exception('Failed to load trailers');
-  //   }
-  // }
 }
