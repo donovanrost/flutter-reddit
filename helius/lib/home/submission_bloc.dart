@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
+import 'package:helius/classes/content_type.dart';
+import 'package:helius/classes/image_model.dart';
+import 'package:helius/home/repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:draw/draw.dart';
 
@@ -19,17 +22,29 @@ import 'package:draw/draw.dart';
 class SubmissionBloc extends Object {
   SubmissionBloc({@required this.instance, @required this.submission});
 
+  Repository _repository = Repository();
+
   final Reddit instance;
   final Submission submission;
   StreamSubscription _apiStream;
   final BehaviorSubject<List> comments = BehaviorSubject();
+  final BehaviorSubject content = BehaviorSubject();
+
+  void test() {
+    Type type = ContentType.getContentTypeFromURL(submission.url.toString());
+
+    if (ContentType.displayImage(type)) {
+      _repository
+          .fetchImage(submission.url.toString())
+          .then((ImageModel image) => content.add(image));
+    }
+  }
 
   void loadHotFor() async {
     CommentForest forest = await submission.refreshComments();
-    print(forest.runtimeType.toString() +
-        ' ---- ' +
-        forest.comments.length.toString());
+
     comments.add(_depthFirstComments(forest.comments));
+    // var x = Submissin submission.
   }
 
   List _depthFirstComments(_comments) {
@@ -46,18 +61,6 @@ class SubmissionBloc extends Object {
     }
     return comments;
   }
-
-  // void _fillComments({@required Stream stream}) {
-  //   _apiStream = stream.listen((s) {
-  //     if (!comments.hasValue) {
-  //       comments.add([s]);
-  //     } else {
-  //       List temp = comments.value;
-  //       temp.add(s);
-  //       comments.add(temp);
-  //     }
-  //   });
-  // }
 
   pauseStream() => _apiStream.pause();
   resumeStream() => _apiStream.resume();

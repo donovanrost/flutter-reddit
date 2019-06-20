@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:helius/common/common.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:html_unescape/html_unescape.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CommentWidget extends StatelessWidget {
   final Comment comment;
-  var unescape = new HtmlUnescape();
+  final unescape = new HtmlUnescape();
 
   CommentWidget({
     @required this.comment,
@@ -80,7 +81,7 @@ class CommentWidget extends StatelessWidget {
             _author(context, comment),
             SubmissionScore(
               score: comment.score,
-            )
+            ),
           ],
         ),
         Row(
@@ -96,11 +97,23 @@ class CommentWidget extends StatelessWidget {
   }
 
   _body(BuildContext context, Comment comment) {
-    return MarkdownBody(data: unescape.convert(comment.body));
+    return MarkdownBody(
+      data: unescape.convert(comment.body),
+      onTapLink: (url) => _launchURL(url),
+    );
     // return Text(
     //   comment.body,
     //   textAlign: TextAlign.start,
     // );
+  }
+
+  _launchURL(url) async {
+    // const url = 'https://flutter.io';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   //TODO refactor all of these into class widgets and put in 'common' folder

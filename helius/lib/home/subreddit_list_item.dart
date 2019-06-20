@@ -43,7 +43,7 @@ class SubredditListItem extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w100),
                       ),
-                    if (item.spoiler) Flair(flairText: 'SPOILER'),
+                    if (item.spoiler) FlairWidget(flairText: 'SPOILER'),
                   ]),
                   Padding(
                     padding: EdgeInsets.all(8),
@@ -240,7 +240,7 @@ class SubredditListItemBottomBar extends StatelessWidget {
               fontSize: 12.0,
             )),
         if (item.authorFlairText != null && item.authorFlairText.length > 0)
-          Flair(flairText: item.authorFlairText),
+          FlairWidget(flairText: item.authorFlairText),
         if (item.upvotes != null) SubmissionScore(score: item.score),
         if (item.numComments != null)
           SubmissionNumComments(numComments: item.numComments),

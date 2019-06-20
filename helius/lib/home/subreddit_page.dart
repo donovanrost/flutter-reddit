@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:helius/app_provider.dart';
+import 'package:helius/common/common.dart';
 import 'package:helius/home/routing_message.dart';
 import 'package:helius/home/submission_bloc.dart';
 import 'package:helius/home/submission_page.dart';
@@ -43,8 +44,21 @@ class _SubredditPageState extends State<SubredditPage> {
 
     return SafeArea(
       top: false,
-      child: CupertinoPageScaffold(child: _subredditPage(context)),
+      child: CupertinoPageScaffold(
+        navigationBar: CustomCupertinoNavigationBar(
+          key: new UniqueKey(),
+          // onTap: () => scroll(),
+          previousPageTitle: '${message.previousPage}',
+          middle: Text('${message.subredditName}'),
+        ),
+        child: SafeArea(child: _subredditPage(context)),
+      ),
     );
+
+    // return SafeArea(
+    //   top: false,
+    //   child: CupertinoPageScaffold(child: _subredditPage(context)),
+    // );
   }
 
   Widget _list(BuildContext context) {
@@ -106,7 +120,7 @@ class _SubredditPageState extends State<SubredditPage> {
   Widget _subredditPage(BuildContext context) {
     List<Widget> _slivers = [];
 
-    _slivers.add(_subredditPageNavigationBar(context));
+    // _slivers.add(_subredditPageNavigationBar(context));
     _slivers.add(_list(context));
 
     return CustomScrollView(controller: _scrollController, slivers: _slivers);

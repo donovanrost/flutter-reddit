@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
-class Flair extends StatelessWidget {
+class FlairWidget extends StatelessWidget {
   final String flairText;
 
-  Flair({@required this.flairText});
+  FlairWidget({@required this.flairText}) : assert(flairText != null);
 
   @override
   Widget build(BuildContext context) {
