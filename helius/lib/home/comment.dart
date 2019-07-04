@@ -1,9 +1,11 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:helius/common/common.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class CommentWidget extends StatelessWidget {
   final Comment comment;
@@ -15,9 +17,48 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (this.comment.depth == 0)
-        ? _topLevelComment(context, this.comment)
-        : _notTopLevelComment(context, this.comment);
+    return _slideable(
+        context,
+        (this.comment.depth == 0)
+            ? _topLevelComment(context, this.comment)
+            : _notTopLevelComment(context, this.comment));
+  }
+
+  Widget _slideable(BuildContext content, child) {
+    // TODO https://pub.dev/packages/flutter_slidable#-readme-tab-
+    // None of these actions do anything. This slidable
+    // isn't of the same style as Apollo. I'm Just leaving
+    // this here because I can't figure out how to do it properly
+
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: child,
+      actions: <Widget>[
+        IconSlideAction(
+            caption: 'Archive',
+            color: Colors.blue,
+            icon: Icons.archive,
+            onTap: () => null),
+        IconSlideAction(
+            caption: 'Share',
+            color: Colors.indigo,
+            icon: Icons.share,
+            onTap: () => null),
+      ],
+      secondaryActions: <Widget>[
+        IconSlideAction(
+            caption: 'More',
+            color: Colors.black45,
+            icon: Icons.more_horiz,
+            onTap: () => null),
+        IconSlideAction(
+            caption: 'Delete',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () => null),
+      ],
+    );
   }
 
   _topLevelComment(BuildContext context, comment) {

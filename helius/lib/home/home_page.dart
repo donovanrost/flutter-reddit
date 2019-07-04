@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helius/app_provider.dart';
+import 'package:helius/common/common.dart';
 import 'package:helius/home/list_item_base.dart';
 import 'package:helius/home/routing_message.dart';
 import 'package:helius/home/subreddit_bloc.dart';
@@ -10,6 +11,8 @@ import 'package:helius/home/subreddit_tile_model.dart';
 import 'package:helius/styles.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
+
+
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -18,6 +21,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  ScrollController _scrollController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+
   var bloc;
 
   List subredditTiles = [
